@@ -1,0 +1,256 @@
+import {
+
+createRouter,
+
+createWebHistory
+
+} from "vue-router";
+
+import Login from "../pages/auth/Login.vue";
+
+import StudentRegister from "../pages/auth/StudentRegister.vue";
+
+import CompanyRegister from "../pages/auth/CompanyRegister.vue";
+
+// Student
+
+import Dashboard from "../pages/student/Dashboard.vue"
+import Profile from "../pages/student/Profile.vue"
+import StudentDrives from "../pages/student/Drives.vue"
+import StudentApplications from "../pages/student/Applications.vue"
+import History from "../pages/student/History.vue"
+import StudentDriveDetails from "../pages/student/DriveDetails.vue"
+import EditProfile from "../pages/student/EditProfile.vue"
+import StudentExportCSV from "../pages/student/ExportCSV.vue"
+
+// Company
+
+import CompanyDashboard from "../pages/company/Dashboard.vue"
+import CompanyProfile from "../pages/company/Profile.vue"
+import CompanyEditProfile from "../pages/company/EditProfile.vue"
+import CreateDrive from "../pages/company/CreateDrive.vue"
+import ManageDrives from "../pages/company/ManageDrives.vue"
+import DriveApplications from "../pages/company/DriveApplications.vue"
+import CompanyStudentDetails from "../pages/company/StudentDetails.vue"
+import SelectedStudents from "../pages/company/SelectedStudents.vue"
+
+// Admin
+
+import AdminDashboard from "../pages/admin/Dashboard.vue"
+import Companies from "../pages/admin/Companies.vue"
+import Students from "../pages/admin/Students.vue"
+import AdminStudentDetails from "../pages/admin/StudentDetails.vue"
+import AdminDrives from "../pages/admin/Drives.vue"
+import AdminDriveDetails from "../pages/admin/DriveDetails.vue"
+import AdminApplications from "../pages/admin/Applications.vue"
+import AdminNotifications from "../pages/admin/Notifications.vue"
+import Reports from "../pages/admin/Reports.vue"
+import AdminExportCSV from "../pages/admin/ExportCSV.vue"
+import Settings from "../pages/admin/Settings.vue"
+import Statistics from "../pages/admin/Statistics.vue"
+
+const routes=[
+
+{
+
+path:"/",
+
+redirect:"/login"
+
+},
+
+{
+
+path:"/login",
+
+component:Login
+
+},
+
+{
+
+path:"/register/student",
+
+component:StudentRegister
+
+},
+
+{
+
+path:"/register/company",
+
+component:CompanyRegister
+
+},
+
+{
+    path: "/student/dashboard",
+    component: Dashboard
+},
+{
+    path: "/student/profile",
+    component: Profile
+},
+{
+    path: "/student/drives",
+    component: StudentDrives
+},
+{
+    path: "/student/applications",
+    component: StudentApplications
+},
+{
+    path: "/student/history",
+    component: History
+},
+{
+    path: "/student/drives/:id",
+    component: StudentDriveDetails
+},
+{
+    path: "/student/export",
+    component: StudentExportCSV
+},
+{
+path:"/student/profile/edit",
+component:EditProfile
+},
+{
+    path: "/company/dashboard",
+    component: CompanyDashboard
+},
+{
+    path: "/company/profile",
+    component: CompanyProfile
+},
+{
+    path: "/company/edit-profile",
+    component: CompanyEditProfile
+},
+{
+    path: "/company/create-drive",
+    component: CreateDrive
+},
+{
+    path: "/company/drives",
+    component: ManageDrives
+},
+{
+    path: "/company/drives/:id/applications",
+    component: DriveApplications
+},
+{
+    path: "/company/student/:id",
+    component: CompanyStudentDetails
+},
+{
+    path: "/company/selected",
+    component: SelectedStudents
+},
+{
+    path:"/admin/dashboard",
+    component:AdminDashboard
+},
+{
+    path:"/admin/companies",
+    component:Companies
+},
+{
+    path:"/admin/students",
+    component:Students
+},
+{
+    path: "/admin/student/:id",
+    component: AdminStudentDetails
+},
+{
+    path: "/admin/drives",
+    component: AdminDrives
+},
+{
+    path: "/admin/drives/:id",
+    component: AdminDriveDetails
+},
+{
+    path:"/admin/applications",
+    component:AdminApplications
+},
+{
+    path:"/admin/notifications",
+    name:"AdminNotifications",
+    component: AdminNotifications
+},
+{
+    path:"/admin/reports",
+    component:Reports
+},
+{
+    path:"/admin/export",
+    component:AdminExportCSV
+},
+{
+    path:"/admin/settings",
+    component:Settings
+},
+{
+    path: "/admin/statistics",
+    component: Statistics
+},
+
+];
+
+const router=createRouter({
+
+history:createWebHistory(),
+
+routes
+
+});
+
+router.beforeEach(
+
+(to,from,next)=>{
+
+const token=
+
+localStorage.getItem("token");
+
+const role=
+
+localStorage.getItem("role");
+
+if(
+
+to.meta.requiresAuth &&
+
+!token
+
+){
+
+next("/login");
+
+return;
+
+}
+
+if(
+
+to.meta.role &&
+
+role!==to.meta.role
+
+){
+
+next("/login");
+
+return;
+
+}
+
+next();
+
+}
+
+);
+
+export default router;
