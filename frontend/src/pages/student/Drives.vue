@@ -235,31 +235,31 @@ onMounted(loadDrives)
 
                                 <td>
 
-                                    {{ drive.company }}
+                                    {{ drive.company_name }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ drive.role }}
+                                    {{ drive.job_title }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ drive.package }}
+                                    {{ drive.salary_package }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ drive.location }}
+                                    {{ drive.interview_location }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ drive.deadline }}
+                                    {{ drive.application_deadline }}
 
                                 </td>
 

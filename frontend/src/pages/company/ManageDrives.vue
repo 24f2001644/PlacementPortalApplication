@@ -282,7 +282,7 @@ onMounted(
 
                             v-for="drive in drives"
 
-                            :key="drive.id"
+                            :key="drive.drive_id"
 
                         >
 
@@ -291,7 +291,7 @@ onMounted(
                             <td>
 
 
-                                {{ drive.role }}
+                                {{ drive.job_title }}
 
 
                             </td>
@@ -303,7 +303,7 @@ onMounted(
                             <td>
 
 
-                                {{ drive.package }}
+                                {{ drive.salary_package }}
 
 
                             </td>
@@ -315,7 +315,7 @@ onMounted(
                             <td>
 
 
-                                {{ drive.location }}
+                                {{ drive.interview_location }}
 
 
                             </td>
@@ -327,7 +327,7 @@ onMounted(
                             <td>
 
 
-                                {{ drive.deadline }}
+                                {{ drive.application_deadline }}
 
 
                             </td>
@@ -372,7 +372,7 @@ onMounted(
 
 
 
-                                    @click="closePlacementDrive(drive.id)"
+                                    @click="closePlacementDrive(drive.drive_id)"
 
 
                                 >

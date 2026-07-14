@@ -65,7 +65,7 @@ async function loadProfile(){
 
         student.value = {
 
-            ...response.profile
+            ...response
 
         }
 

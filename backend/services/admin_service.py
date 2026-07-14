@@ -9,7 +9,7 @@ from models.student import Student
 from models.company import Company
 from models.placement_drive import PlacementDrive
 from models.application import Application
-
+from extensions import cache
 
 # ==========================================================
 # ADMIN DASHBOARD
@@ -256,6 +256,8 @@ def approve_company(user_id):
         company.approval_date = datetime.utcnow()
 
     db.session.commit()
+    
+    cache.clear()
 
     return {
 
@@ -286,6 +288,8 @@ def reject_company(user_id):
     db.session.delete(user)
 
     db.session.commit()
+    
+    cache.clear()
 
     return {
 
@@ -316,6 +320,7 @@ def blacklist_company(user_id):
     user.is_blacklisted = not user.is_blacklisted
 
     db.session.commit()
+    cache.clear()
 
     return {
 
@@ -415,6 +420,78 @@ def get_all_students(search=None):
     return result, 200
 
 
+
+def get_student_details(user_id):
+
+    from models.student import Student
+    from models.user import User
+
+
+    student = Student.query.filter_by(
+        user_id=user_id
+    ).first()
+
+
+    if not student:
+
+        return {
+            "message": "Student not found"
+        }, 404
+
+
+    user = User.query.filter_by(
+        user_id=user_id
+    ).first()
+
+
+    return {
+
+        "user_id": student.user_id,
+
+        "full_name": student.full_name,
+
+        "email": user.email,
+
+        "roll_number": student.roll_number,
+
+        "graduation_year": student.graduation_year,
+
+        "cgpa": student.cgpa,
+
+        "tenth_marks": student.tenth_marks,
+
+        "twelfth_marks": student.twelfth_marks,
+
+        "dob": (
+            student.dob.strftime("%Y-%m-%d")
+            if student.dob
+            else None
+        ),
+
+        "year": student.year,
+
+        "course": student.course,
+
+        "branch": student.branch,
+
+        "phone": student.phone,
+
+        "address": student.address,
+
+        "skills": student.skills,
+
+        "resume_path": student.resume_path,
+
+        "profile_completed": student.profile_completed,
+
+        "created_at": (
+            student.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            if student.created_at
+            else None
+        )
+
+    }, 200
+
 # ==========================================================
 # TOGGLE STUDENT STATUS
 # ==========================================================
@@ -437,6 +514,7 @@ def toggle_student_status(user_id):
     user.is_active = not user.is_active
 
     db.session.commit()
+    cache.clear()
 
     return {
 
@@ -445,6 +523,9 @@ def toggle_student_status(user_id):
         "active": user.is_active
 
     }, 200
+
+
+
 
 
 # ==========================================================
@@ -569,6 +650,8 @@ def approve_drive(drive_id):
     drive.status = "Approved"
 
     db.session.commit()
+    
+    cache.clear()
 
     return {
 
@@ -599,6 +682,7 @@ def reject_drive(drive_id):
     drive.status = "Rejected"
 
     db.session.commit()
+    cache.clear()
 
     return {
 
@@ -637,6 +721,8 @@ def close_drive(drive_id):
     drive.status = "Closed"
 
     db.session.commit()
+    
+    cache.clear()
 
     return {
 
@@ -853,6 +939,8 @@ def update_application_status(
     application.updated_at = datetime.utcnow()
 
     db.session.commit()
+    
+    cache.clear()
 
     return {
 
@@ -866,7 +954,7 @@ def update_application_status(
 # ==========================================================
 # PLACEMENT STATISTICS
 # ==========================================================
-
+@cache.cached(timeout=300)
 def placement_statistics():
 
     # ------------------------------------------------------
@@ -1347,3 +1435,32 @@ def get_drive_details(drive_id):
         "applicants": applicants
 
     }, 200
+    
+    
+    
+    
+def get_student_details(user_id):
+
+    student = Student.query.filter_by(
+        user_id=user_id
+    ).first()
+
+
+    if not student:
+        return {
+            "message":"Student not found"
+        },404
+
+
+    return {
+
+        "name": student.full_name,
+        "roll_number": student.roll_number,
+        "branch": student.branch,
+        "course": student.course,
+        "cgpa": student.cgpa,
+        "phone": student.phone,
+        "skills": student.skills,
+        "resume": student.resume_path
+
+    },200

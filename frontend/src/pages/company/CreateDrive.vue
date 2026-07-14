@@ -26,17 +26,23 @@ const loading = ref(false)
 
 const drive = ref({
 
-    role:"",
+    job_title: "",
 
-    description:"",
+    job_description: "",
 
-    package:"",
+    salary_package: "",
 
-    location:"",
+    interview_location: "",
 
-    eligibility:"",
+    eligible_branches: "",
 
-    deadline:""
+    eligible_cgpa: "",
+
+    eligible_year: "",
+
+    application_deadline: "",
+
+    interview_date: ""
 
 })
 
@@ -184,7 +190,7 @@ async function submitDrive(){
 
                                 placeholder="Software Engineer"
 
-                                v-model="drive.role"
+                                v-model="drive.job_title"
 
                                 required
 
@@ -217,7 +223,7 @@ async function submitDrive(){
 
                                 placeholder="12 LPA"
 
-                                v-model="drive.package"
+                                v-model="drive.salary_package"
 
                                 required
 
@@ -251,7 +257,7 @@ async function submitDrive(){
 
                                 placeholder="Bangalore"
 
-                                v-model="drive.location"
+                                v-model="drive.interview_location"
 
                                 required
 
@@ -283,7 +289,7 @@ async function submitDrive(){
 
                                 class="form-control"
 
-                                v-model="drive.deadline"
+                                v-model="drive.application_deadline"
 
                                 required
 
@@ -318,7 +324,7 @@ async function submitDrive(){
 
                                 placeholder="CGPA > 8, CSE only"
 
-                                v-model="drive.eligibility"
+                                v-model="drive.eligible_branches"
 
                             >
 
@@ -351,13 +357,53 @@ async function submitDrive(){
 
                                 placeholder="Describe role responsibilities..."
 
-                                v-model="drive.description"
+                                v-model="drive.job_description"
 
                                 required
 
                             ></textarea>
 
 
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label>Minimum CGPA</label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                class="form-control"
+                                v-model="drive.eligible_cgpa"
+                                placeholder="7.5"
+                                required
+                            >
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Eligible Year</label>
+
+                            <select
+                                class="form-control"
+                                v-model="drive.eligible_year"
+                                required
+                            >
+                                <option value="">Select Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label>Interview Date</label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                v-model="drive.interview_date"
+                            >
                         </div>
 
 

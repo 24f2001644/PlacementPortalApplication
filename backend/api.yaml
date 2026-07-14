@@ -1,0 +1,849 @@
+openapi: 3.0.3
+
+info:
+  title: Placement Portal Application API
+  description: |
+    REST API documentation for Placement Portal Application.
+    The system provides role-based services for Admin, Company, and Student users.
+  version: 1.0.0
+
+
+servers:
+  - url: http://127.0.0.1:5000
+
+
+tags:
+
+  - name: Authentication
+    description: User authentication and profile management
+
+  - name: Admin
+    description: Admin management APIs
+
+  - name: Company
+    description: Company placement management APIs
+
+  - name: Student
+    description: Student placement APIs
+
+
+
+components:
+
+  securitySchemes:
+
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+
+security:
+  - JWT: []
+
+
+
+paths:
+
+
+# ============================
+# AUTH APIs
+# ============================
+
+
+  /api/auth/login:
+
+    post:
+
+      tags:
+        - Authentication
+
+      summary: User Login
+
+      security: []
+
+      requestBody:
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+
+              type: object
+
+              properties:
+
+                email:
+                  type: string
+
+                password:
+                  type: string
+
+
+      responses:
+
+        "200":
+
+          description: Login successful
+
+        "401":
+
+          description: Invalid credentials
+
+
+
+  /api/auth/register/student:
+
+    post:
+
+      tags:
+        - Authentication
+
+      summary: Register Student
+
+
+      requestBody:
+
+        required: true
+
+        content:
+
+          multipart/form-data:
+
+            schema:
+
+              type: object
+
+              properties:
+
+                email:
+                  type: string
+
+                password:
+                  type: string
+
+                resume:
+                  type: string
+                  format: binary
+
+
+      responses:
+
+        "201":
+
+          description: Student registered
+
+
+
+  /api/auth/register/company:
+
+    post:
+
+      tags:
+
+        - Authentication
+
+      summary:
+
+        Register Company
+
+
+      requestBody:
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+
+              type: object
+
+
+      responses:
+
+        "201":
+
+          description: Company registered
+
+
+
+
+  /api/auth/profile:
+
+    get:
+
+      tags:
+
+        - Authentication
+
+      summary:
+
+        Get current user profile
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Profile details
+
+
+
+
+  /api/auth/student/profile:
+
+    put:
+
+      tags:
+
+        - Authentication
+
+      summary:
+
+        Update student profile
+
+
+      requestBody:
+
+        required: true
+
+        content:
+
+          application/json:
+
+            schema:
+
+              type: object
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Profile updated
+
+
+
+
+  /api/auth/student/resume:
+
+    post:
+
+      tags:
+
+        - Authentication
+
+      summary:
+
+        Upload student resume
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Resume uploaded
+
+
+
+
+  /api/auth/company/profile:
+
+    put:
+
+      tags:
+
+        - Authentication
+
+      summary:
+
+        Update company profile
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Company profile updated
+
+
+
+
+# ============================
+# ADMIN APIs
+# ============================
+
+
+  /api/admin/dashboard:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Admin Dashboard
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Dashboard statistics
+
+
+
+
+  /api/admin/companies:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Get all companies
+
+
+      parameters:
+
+        - name: search
+
+          in: query
+
+          schema:
+
+            type: string
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Company list
+
+
+
+
+  /api/admin/companies/{user_id}/approve:
+
+    put:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Approve company
+
+
+      parameters:
+
+        - name: user_id
+
+          in: path
+
+          required: true
+
+          schema:
+
+            type: integer
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Company approved
+
+
+
+
+  /api/admin/companies/{user_id}/reject:
+
+    delete:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Reject company
+
+
+      parameters:
+
+        - name: user_id
+
+          in: path
+
+          required: true
+
+          schema:
+
+            type: integer
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Company rejected
+
+
+
+
+  /api/admin/students:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Get students
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Student list
+
+
+
+
+  /api/admin/drives:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Get placement drives
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Drive list
+
+
+
+
+  /api/admin/applications:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Get applications
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Application list
+
+
+
+
+  /api/admin/statistics:
+
+    get:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Placement statistics
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Statistics data
+
+
+
+
+  /api/admin/export-applications:
+
+    post:
+
+      tags:
+
+        - Admin
+
+      summary:
+
+        Export applications CSV
+
+
+      responses:
+
+        "202":
+
+          description:
+
+            Export started
+
+
+
+
+# ============================
+# COMPANY APIs
+# ============================
+
+
+  /api/company/profile:
+
+    get:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Get company profile
+
+
+      responses:
+
+        "200":
+
+          description:
+
+            Company details
+
+
+
+
+  /api/company/dashboard:
+
+    get:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Company dashboard
+
+
+
+
+  /api/company/drives:
+
+    get:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Get company drives
+
+
+
+
+    post:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Create placement drive
+
+
+
+
+  /api/company/drives/{drive_id}:
+
+    put:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Update drive
+
+
+    delete:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Delete drive
+
+
+
+
+  /api/company/drives/{drive_id}/applications:
+
+    get:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        View drive applications
+
+
+
+
+  /api/company/applications/{application_id}/status:
+
+    put:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Update application status
+
+
+
+
+  /api/company/selected-students:
+
+    get:
+
+      tags:
+
+        - Company
+
+      summary:
+
+        Selected students
+
+
+
+
+# ============================
+# STUDENT APIs
+# ============================
+
+
+  /api/student/profile:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Get student profile
+
+
+
+    put:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Update student profile
+
+
+
+
+  /api/student/drives:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Get available placement drives
+
+
+
+
+  /api/student/drives/{drive_id}:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Get drive details
+
+
+
+
+  /api/student/drives/{drive_id}/apply:
+
+    post:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Apply for placement drive
+
+
+
+
+  /api/student/applications:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        View applications
+
+
+
+
+  /api/student/applications/{application_id}/withdraw:
+
+    delete:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Withdraw application
+
+
+
+
+  /api/student/dashboard:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Student dashboard
+
+
+
+
+  /api/student/export:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Export applications CSV
+
+
+
+
+  /api/student/notifications:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Get notifications
+
+
+
+
+  /api/student/notifications/count:
+
+    get:
+
+      tags:
+
+        - Student
+
+      summary:
+
+        Get unread notification count

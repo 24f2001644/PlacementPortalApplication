@@ -7,7 +7,7 @@ from models.student import Student
 from models.application import Application
 from models.placement_drive import PlacementDrive
 
-
+from datetime import datetime
 # ==========================================================
 # COMPANY DASHBOARD
 # ==========================================================
@@ -199,7 +199,23 @@ def create_drive(user_id, data):
         return {
             "message": "Company approval pending"
         }, 403
+    
+    application_deadline = None
 
+    if data.get("application_deadline"):
+        application_deadline = datetime.strptime(
+            data.get("application_deadline"),
+            "%Y-%m-%d"
+        ).date()
+
+
+    interview_date = None
+
+    if data.get("interview_date"):
+        interview_date = datetime.strptime(
+            data.get("interview_date"),
+            "%Y-%m-%d"
+        ).date()
 
     drive = PlacementDrive(
 
@@ -215,9 +231,9 @@ def create_drive(user_id, data):
 
         eligible_year=data.get("eligible_year"),
 
-        application_deadline=data.get("application_deadline"),
+        application_deadline=application_deadline,
 
-        interview_date=data.get("interview_date"),
+        interview_date=interview_date,
 
         interview_location=data.get("interview_location"),
 

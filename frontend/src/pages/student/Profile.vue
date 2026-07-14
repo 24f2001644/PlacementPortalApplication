@@ -52,11 +52,7 @@ async function loadProfile(){
 
     try{
 
-        const response = await getProfile()
-
-        student.value = response.profile
-
-        student.value.email = response.email
+        student.value = await getProfile()
 
     }
 

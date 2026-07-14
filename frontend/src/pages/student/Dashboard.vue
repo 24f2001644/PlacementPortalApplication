@@ -447,31 +447,21 @@ onMounted(loadDashboard)
 
 
                             <tr
-
-
                                 v-for="item in dashboard.recent_applications"
-
-
-                                :key="item.id"
-
-
+                                :key="item.application_id"
                             >
 
 
 
                                 <td>
-
-                                    {{ item.company }}
-
+                                    {{ item.company_name }}
                                 </td>
 
 
 
 
                                 <td>
-
-                                    {{ item.role }}
-
+                                    {{ item.job_title }}
                                 </td>
 
 
@@ -499,9 +489,7 @@ onMounted(loadDashboard)
 
 
                                 <td>
-
-                                    {{ item.date }}
-
+                                    {{ item.application_date }}
                                 </td>
 
 

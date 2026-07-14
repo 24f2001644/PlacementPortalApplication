@@ -11,6 +11,8 @@ from flask_jwt_extended import (
 
 from services.student_service import (
 
+
+    update_student_profile,
     get_student_profile,
 
     get_available_drives,
@@ -345,7 +347,7 @@ def get_notifications():
             "message": n.message,
             "type": n.notification_type,
             "read": n.is_read,
-            "created_at": n.created_at
+            "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
         for n in notifications
     ])
@@ -391,3 +393,23 @@ def notification_count():
     ).count()
 
     return {"count":count}
+
+
+
+@student_bp.route(
+    "/profile",
+    methods=["PUT"]
+)
+@jwt_required()
+def update_profile():
+
+    user_id = get_jwt_identity()
+
+    data = request.get_json()
+
+    response, status = update_student_profile(
+        user_id,
+        data
+    )
+
+    return jsonify(response), status

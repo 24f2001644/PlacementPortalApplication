@@ -19,27 +19,26 @@ async function exportCSV(){
 
         const response = await exportApplications()
 
-        const url = window.URL.createObjectURL(
-
-            new Blob(
-
-                [response.data]
-
-            )
-
+        const blob = new Blob(
+            [response.data],
+            {
+                type: "text/csv"
+            }
         )
 
-        const link = document.createElement(
+        const url = window.URL.createObjectURL(blob)
 
-            "a"
-
-        )
+        const link = document.createElement("a")
 
         link.href = url
 
-        link.download = "applications.csv"
+        link.download = "my_applications.csv"
+
+        document.body.appendChild(link)
 
         link.click()
+
+        link.remove()
 
         window.URL.revokeObjectURL(url)
 

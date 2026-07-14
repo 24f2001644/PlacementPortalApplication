@@ -24,6 +24,7 @@ from services.admin_service import (
     update_application_status,
 
     placement_statistics,
+    get_student_details,
     get_drive_details
 
 )
@@ -153,6 +154,19 @@ def toggle_student(user_id):
     return jsonify(data), status_code
 
 
+
+
+@admin_bp.route(
+    "/students/<int:user_id>",
+    methods=["GET"]
+)
+@jwt_required()
+@admin_required
+def student_details(user_id):
+
+    data, status = get_student_details(user_id)
+
+    return jsonify(data), status
 # ==========================================================
 # PLACEMENT DRIVE MANAGEMENT
 # ==========================================================
@@ -295,8 +309,6 @@ def statistics():
 
     return jsonify(data), status_code
 
-
-from tasks.export_tasks import export_applications_csv
 from extensions import db
 
 
@@ -309,6 +321,8 @@ from extensions import db
 @admin_required
 def export_applications():
 
+    from tasks.export_tasks import export_applications_csv
+
     job = ExportJob(
         status="PENDING"
     )
@@ -319,9 +333,9 @@ def export_applications():
     export_applications_csv.delay(job.export_id)
 
     return jsonify({
-    "message": "Export started",
-    "job_id": job.export_id
-}), 202
+        "message": "Export started",
+        "job_id": job.export_id
+    }), 202
     
     
     
@@ -345,3 +359,59 @@ def download_export(job_id):
         job.file_path,
         as_attachment=True
     )
+    
+    
+    
+    
+# ==========================================================
+# STUDENT MANAGEMENT
+# ==========================================================
+
+# ==========================================================
+# STUDENT MANAGEMENT
+# ==========================================================
+
+# @admin_bp.route(
+#     "/students",
+#     methods=["GET"]
+# )
+# @jwt_required()
+# @admin_required
+# def students():
+
+#     search = request.args.get("search")
+
+#     data, status_code = get_all_students(search)
+
+#     return jsonify(data), status_code
+
+
+# @admin_bp.route(
+#     "/students/<int:user_id>/toggle",
+#     methods=["PUT"]
+# )
+# @jwt_required()
+# @admin_required
+# def toggle_student(user_id):
+
+#     data, status_code = toggle_student_status(user_id)
+
+#     return jsonify(data), status_code
+
+
+
+# # ==========================================================
+# # STUDENT DETAILS
+# # ==========================================================
+
+# @admin_bp.route(
+#     "/students/<int:user_id>",
+#     methods=["GET"]
+# )
+# @jwt_required()
+# @admin_required
+# def student_details(user_id):
+
+#     data, status = get_student_details(user_id)
+
+#     return jsonify(data), status

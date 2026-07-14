@@ -35,19 +35,23 @@ const drive = ref({
 
     drive_id:null,
 
-    company:"",
+    company_name:"",
 
-    role:"",
+    job_title:"",
 
-    description:"",
+    job_description:"",
 
-    package:"",
+    salary_package:"",
 
-    location:"",
+    interview_location:"",
 
-    eligibility:"",
+    application_deadline:"",
 
-    deadline:""
+    eligible_branches:"",
+
+    eligible_cgpa:null,
+
+    eligible_year:null
 
 })
 
@@ -199,7 +203,7 @@ onMounted(loadDrive)
 
                                         <td>
 
-                                            {{ drive.company }}
+                                            {{ drive.company_name }}
 
                                         </td>
 
@@ -217,7 +221,7 @@ onMounted(loadDrive)
 
                                         <td>
 
-                                            {{ drive.role }}
+                                            {{ drive.job_title }}
 
                                         </td>
 
@@ -235,7 +239,7 @@ onMounted(loadDrive)
 
                                         <td>
 
-                                            {{ drive.package }}
+                                            {{ drive.salary_package }}
 
                                         </td>
 
@@ -253,7 +257,7 @@ onMounted(loadDrive)
 
                                         <td>
 
-                                            {{ drive.location }}
+                                            {{ drive.interview_location }}
 
                                         </td>
 
@@ -271,7 +275,7 @@ onMounted(loadDrive)
 
                                         <td>
 
-                                            {{ drive.deadline }}
+                                            {{ drive.application_deadline }}
 
                                         </td>
 
@@ -297,7 +301,22 @@ onMounted(loadDrive)
 
                             <p>
 
-                                {{ drive.eligibility }}
+                            <strong>Branches:</strong>
+                            {{ drive.eligible_branches }}
+
+                            </p>
+
+                            <p>
+
+                            <strong>Minimum CGPA:</strong>
+                            {{ drive.eligible_cgpa }}
+
+                            </p>
+
+                            <p>
+
+                            <strong>Graduation Year:</strong>
+                            {{ drive.eligible_year }}
 
                             </p>
 
@@ -315,7 +334,7 @@ onMounted(loadDrive)
 
                             <p>
 
-                                {{ drive.description }}
+                                {{ drive.job_description }}
 
                             </p>
 

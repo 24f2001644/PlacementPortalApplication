@@ -15,6 +15,118 @@ from models.placement_drive import PlacementDrive
 # ==========================================================
 # STUDENT PROFILE
 # ==========================================================
+# ==========================================================
+# UPDATE STUDENT PROFILE
+# ==========================================================
+
+def update_student_profile(user_id, data):
+
+    student = Student.query.filter_by(
+        user_id=user_id
+    ).first()
+
+    if not student:
+        return {
+            "message": "Student not found"
+        }, 404
+
+    student.full_name = data.get(
+        "full_name",
+        student.full_name
+    )
+
+    student.phone = data.get(
+        "phone",
+        student.phone
+    )
+
+    student.address = data.get(
+        "address",
+        student.address
+    )
+
+    student.course = data.get(
+        "course",
+        student.course
+    )
+
+    student.branch = data.get(
+        "branch",
+        student.branch
+    )
+
+    student.cgpa = data.get(
+        "cgpa",
+        student.cgpa
+    )
+
+    student.year = data.get(
+        "year",
+        student.year
+    )
+
+    student.graduation_year = data.get(
+        "graduation_year",
+        student.graduation_year
+    )
+
+    student.tenth_marks = data.get(
+        "tenth_marks",
+        student.tenth_marks
+    )
+
+    student.twelfth_marks = data.get(
+        "twelfth_marks",
+        student.twelfth_marks
+    )
+
+    student.skills = data.get(
+        "skills",
+        student.skills
+    )
+
+    student.dob = data.get(
+        "dob",
+        student.dob
+    )
+
+    # Resume upload can be added later
+
+    profile_fields = [
+
+        student.full_name,
+        student.roll_number,
+        student.phone,
+        student.course,
+        student.branch,
+        student.year,
+        student.graduation_year,
+        student.cgpa,
+        student.skills,
+        student.resume_path
+
+    ]
+
+    completed = sum(
+        1
+        for field in profile_fields
+        if field not in (None, "", [])
+    )
+
+    student.profile_completed = (
+        completed == len(profile_fields)
+    )
+
+    db.session.commit()
+
+    return {
+
+        "message": "Profile updated successfully",
+
+        "profile_completed": student.profile_completed
+
+    }, 200
+
 
 def get_student_profile(user_id):
 

@@ -231,19 +231,19 @@ onMounted(loadApplications)
 
                                 <td>
 
-                                    {{ application.company }}
+                                    {{ application.company_name }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ application.role }}
+                                    {{ application.job_title }}
 
                                 </td>
 
                                 <td>
 
-                                    {{ application.applied_date }}
+                                    {{ application.application_date }}
 
                                 </td>
 
