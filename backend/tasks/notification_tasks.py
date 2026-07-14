@@ -6,7 +6,8 @@ from models.notification import Notification
 
 from datetime import datetime
 
-
+from extensions import db
+from models.export_job import ExportJob
 
 @celery.task(
     name="tasks.send_notification"
