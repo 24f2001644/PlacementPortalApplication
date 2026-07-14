@@ -1,27 +1,18 @@
 from celery import Celery
 
-from app import create_app
+from config import Config
 
 
-
-def create_celery(app):
+def create_celery():
 
     celery = Celery(
-
-        app.import_name,
-
-        broker=app.config["CELERY_BROKER_URL"],
-
-        backend=app.config["CELERY_RESULT_BACKEND"],
-
+        "placement_portal",
+        broker=Config.CELERY_BROKER_URL,
+        backend=Config.CELERY_RESULT_BACKEND,
         include=[
-
             "tasks.export_tasks",
-
             "tasks.notification_tasks"
-
         ]
-
     )
 
 
@@ -36,7 +27,6 @@ def create_celery(app):
         timezone="Asia/Kolkata",
 
         enable_utc=True
-
     )
 
 
@@ -44,9 +34,4 @@ def create_celery(app):
 
 
 
-flask_app = create_app()
-
-
-celery = create_celery(
-    flask_app
-)
+celery = create_celery()

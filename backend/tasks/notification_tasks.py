@@ -10,7 +10,7 @@ from extensions import db
 from models.export_job import ExportJob
 
 @celery.task(
-    name="tasks.send_notification"
+    name="tasks.notification_tasks.send_notification"
 )
 def send_notification(
     user_id,

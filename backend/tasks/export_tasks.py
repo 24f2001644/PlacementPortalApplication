@@ -16,7 +16,7 @@ from extensions import db
 from models.export_job import ExportJob
 
 @celery.task(
-    name="tasks.export_applications_csv"
+    name="tasks.export_tasks.export_applications_csv"
 )
 def export_applications_csv(job_id):
 
