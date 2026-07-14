@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from extensions import db
 
 
@@ -37,12 +38,14 @@ class Notification(db.Model):
 
     is_read = db.Column(
         db.Boolean,
-        default=False
+        default=False,
+        nullable=False
     )
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        nullable=False
     )
 
     # Relationship

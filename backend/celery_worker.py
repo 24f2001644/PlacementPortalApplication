@@ -1,28 +1,51 @@
 from celery import Celery
-from config import Config
+
+from app import create_app
 
 
-celery = Celery(
-    "placement_portal",
-    broker=Config.CELERY_BROKER_URL,
-    backend=Config.CELERY_RESULT_BACKEND
-)
+# ==========================================================
+# Create Flask App
+# ==========================================================
+
+flask_app = create_app()
 
 
-celery.conf.update(
+# ==========================================================
+# Create Celery
+# ==========================================================
 
-    task_serializer="json",
+def create_celery(app):
 
-    result_serializer="json",
+    celery = Celery(
+        app.import_name,
+        include=[
+            "tasks.export_tasks",
+            "tasks.notification_tasks"
+        ]
+    )
 
-    accept_content=["json"],
+    # Load Celery configuration
+    celery.config_from_object("celery_config")
 
-    timezone="Asia/Kolkata",
+    # ==========================================================
+    # Flask Application Context
+    # ==========================================================
 
-    enable_utc=True
-)
+    class ContextTask(celery.Task):
+
+        def __call__(self, *args, **kwargs):
+
+            with app.app_context():
+
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+
+    return celery
 
 
-# Import tasks explicitly
-import tasks.export_tasks
-import tasks.notification_tasks
+# ==========================================================
+# Celery Instance
+# ==========================================================
+
+celery = create_celery(flask_app)

@@ -4,11 +4,11 @@ result_backend = "redis://localhost:6379/0"
 
 task_serializer = "json"
 
+result_serializer = "json"
+
 accept_content = [
     "json"
 ]
-
-result_serializer = "json"
 
 timezone = "Asia/Kolkata"
 

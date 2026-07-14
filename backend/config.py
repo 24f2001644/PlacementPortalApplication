@@ -3,30 +3,29 @@ import os
 
 class Config:
 
+    # ==========================================================
+    # Flask
+    # ==========================================================
 
     SECRET_KEY = os.getenv(
         "SECRET_KEY",
         "placement-portal-secret"
     )
 
-
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
         "sqlite:///placement.db"
     )
 
-
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 
     JWT_SECRET_KEY = os.getenv(
         "JWT_SECRET_KEY",
         "jwt-secret"
     )
 
-
     # ==========================================================
-    # REDIS CONFIGURATION
+    # Redis
     # ==========================================================
 
     REDIS_URL = os.getenv(
@@ -34,9 +33,8 @@ class Config:
         "redis://localhost:6379/0"
     )
 
-
     # ==========================================================
-    # FLASK CACHE
+    # Flask Cache
     # ==========================================================
 
     CACHE_TYPE = "RedisCache"
@@ -44,12 +42,3 @@ class Config:
     CACHE_REDIS_URL = REDIS_URL
 
     CACHE_DEFAULT_TIMEOUT = 300
-
-
-    # ==========================================================
-    # CELERY
-    # ==========================================================
-
-    CELERY_BROKER_URL = REDIS_URL
-
-    CELERY_RESULT_BACKEND = REDIS_URL
