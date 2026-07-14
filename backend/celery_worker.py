@@ -1,37 +1,28 @@
 from celery import Celery
-
 from config import Config
 
 
-def create_celery():
-
-    celery = Celery(
-        "placement_portal",
-        broker=Config.CELERY_BROKER_URL,
-        backend=Config.CELERY_RESULT_BACKEND,
-        include=[
-            "tasks.export_tasks",
-            "tasks.notification_tasks"
-        ]
-    )
+celery = Celery(
+    "placement_portal",
+    broker=Config.CELERY_BROKER_URL,
+    backend=Config.CELERY_RESULT_BACKEND
+)
 
 
-    celery.conf.update(
+celery.conf.update(
 
-        task_serializer="json",
+    task_serializer="json",
 
-        result_serializer="json",
+    result_serializer="json",
 
-        accept_content=["json"],
+    accept_content=["json"],
 
-        timezone="Asia/Kolkata",
+    timezone="Asia/Kolkata",
 
-        enable_utc=True
-    )
-
-
-    return celery
+    enable_utc=True
+)
 
 
-
-celery = create_celery()
+# Import tasks explicitly
+import tasks.export_tasks
+import tasks.notification_tasks
