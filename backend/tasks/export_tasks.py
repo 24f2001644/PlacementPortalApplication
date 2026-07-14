@@ -1,61 +1,155 @@
-import os
+import csv
 
-import pandas as pd
+from io import StringIO
 
-from celery_app import celery
+from datetime import datetime
+
+from celery_worker import celery
+
+from extensions import db
+
+from models.export_job import ExportJob
 
 from models.application import Application
-from models.placement_drive import PlacementDrive
-from models.company import Company
-
-
-@celery.task
-def export_student_applications(student_id):
-
-    applications = Application.query.filter_by(
-        student_id=student_id
-    ).all()
-
-    rows = []
-
-    for application in applications:
-
-        drive = application.drive
-
-        company = drive.company
-
-        rows.append({
-
-            "Application ID": application.id,
-
-            "Company": company.company_name,
-
-            "Role": drive.role,
-
-            "Package": drive.package,
-
-            "Location": drive.location,
-
-            "Status": application.status,
-
-            "Applied On": application.created_at
-
-        })
 
 
 
-    os.makedirs("exports", exist_ok=True)
+@celery.task(
+    name="tasks.export_applications_csv"
+)
+def export_applications_csv(job_id):
 
-    filename = f"exports/student_{student_id}_applications.csv"
 
-    dataframe = pd.DataFrame(rows)
+    job = ExportJob.query.get(job_id)
 
-    dataframe.to_csv(
 
-        filename,
+    if not job:
 
-        index=False
+        return {
+            "message": "Export job not found"
+        }
 
-    )
 
-    return filename
+
+    try:
+
+        job.status = "PROCESSING"
+
+        db.session.commit()
+
+
+
+        applications = Application.query.all()
+
+
+
+        output = StringIO()
+
+
+        writer = csv.writer(output)
+
+
+        writer.writerow([
+
+            "Application ID",
+
+            "Student",
+
+            "Company",
+
+            "Role",
+
+            "Status",
+
+            "Applied Date"
+
+        ])
+
+
+
+
+        for application in applications:
+
+
+            writer.writerow([
+
+                application.application_id,
+
+                application.student.full_name,
+
+                application.drive.company.company_name,
+
+                application.drive.job_title,
+
+                application.status,
+
+                application.application_date
+
+            ])
+
+
+
+
+        filename = (
+
+            f"applications_{datetime.utcnow().timestamp()}.csv"
+
+        )
+
+
+
+        file_path = (
+
+            f"exports/{filename}"
+
+        )
+
+
+
+        with open(
+            file_path,
+            "w",
+            newline=""
+        ) as file:
+
+            file.write(
+                output.getvalue()
+            )
+
+
+
+        job.status = "COMPLETED"
+
+        job.file_path = file_path
+
+        job.completed_at = datetime.utcnow()
+
+
+
+        db.session.commit()
+
+
+
+        return {
+
+            "message": "Export completed",
+
+            "file": file_path
+
+        }
+
+
+
+    except Exception as e:
+
+
+        job.status = "FAILED"
+
+        db.session.commit()
+
+
+        return {
+
+            "error": str(e)
+
+        }

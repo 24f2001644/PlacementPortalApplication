@@ -1,6 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+
 from flask_jwt_extended import jwt_required
-from services.auth_service import update_company_profile
 
 from services.auth_service import (
     login_user,
@@ -8,8 +8,10 @@ from services.auth_service import (
     register_company,
     get_profile,
     update_student_profile,
-    upload_resume
+    upload_resume,
+    update_company_profile
 )
+
 
 auth_bp = Blueprint(
     "auth",
@@ -30,6 +32,7 @@ def login():
     return login_user(data)
 
 
+
 # ============================================
 # STUDENT REGISTRATION
 # ============================================
@@ -41,6 +44,7 @@ def student_register():
         request.form,
         request.files.get("resume")
     )
+
 
 
 # ============================================
@@ -55,6 +59,7 @@ def company_register():
     return register_company(data)
 
 
+
 # ============================================
 # CURRENT USER PROFILE
 # ============================================
@@ -64,6 +69,7 @@ def company_register():
 def profile():
 
     return get_profile()
+
 
 
 # ============================================
@@ -79,6 +85,7 @@ def edit_student_profile():
     return update_student_profile(data)
 
 
+
 # ============================================
 # UPLOAD RESUME
 # ============================================
@@ -90,26 +97,21 @@ def student_resume():
     return upload_resume(
         request.files.get("resume")
     )
-    
-    
-    
+
+
+
 # ============================================
 # UPDATE COMPANY PROFILE
 # ============================================
 
-@auth_bp.route(
-    "/company/profile",
-    methods=["PUT"]
-)
+@auth_bp.put("/company/profile")
 @jwt_required()
 def update_company():
 
-    data = request.json
+    data = request.get_json()
 
-
-    response,status = update_company_profile(
+    response, status = update_company_profile(
         data
     )
 
-
-    return jsonify(response),status
+    return jsonify(response), status

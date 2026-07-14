@@ -23,6 +23,7 @@ from services.student_service import (
     student_dashboard,
 
     export_student_csv
+    
 
 )
 
@@ -279,23 +280,18 @@ def dashboard():
 # ==========================================================
 
 @student_bp.route(
-
     "/drives/<int:drive_id>",
-
     methods=["GET"]
-
 )
 @jwt_required()
 @student_required
 def drive_details(drive_id):
 
+    user_id = get_jwt_identity()
 
     data,status = get_drive_details(
-
         drive_id
-
     )
-
 
     return jsonify(data),status
 
@@ -313,7 +309,7 @@ def drive_details(drive_id):
 )
 @jwt_required()
 @student_required
-def export_csv():
+def export_applications_csv():
 
 
     user_id = get_jwt_identity()

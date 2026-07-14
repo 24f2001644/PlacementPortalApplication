@@ -1,15 +1,11 @@
-from datetime import datetime
-
-from sqlalchemy import or_
+from sqlalchemy import func
 
 from extensions import db
 
-from models.user import User
 from models.company import Company
-from models.placement_drive import PlacementDrive
-from models.application import Application
 from models.student import Student
-
+from models.application import Application
+from models.placement_drive import PlacementDrive
 
 
 # ==========================================================
@@ -25,65 +21,104 @@ def get_dashboard(user_id):
     if not company:
 
         return {
-            "message":"Company not found"
-        },404
-
+            "message": "Company not found"
+        }, 404
 
     drives = PlacementDrive.query.filter_by(
         company_id=user_id
     ).all()
 
+    drive_ids = [
 
-    drive_ids = [drive.id for drive in drives]
+        drive.drive_id
+
+        for drive in drives
+
+    ]
 
 
-    applications = Application.query.filter(
-        Application.drive_id.in_(drive_ids)
-    ).all() if drive_ids else []
+    if drive_ids:
+
+        applications = Application.query.filter(
+
+            Application.drive_id.in_(drive_ids)
+
+        ).all()
+
+    else:
+
+        applications = []
 
 
-    recent = []
+    recent_applications = []
 
-    for application in applications[-5:]:
+    for application in sorted(
 
-        recent.append({
+        applications,
 
-            "id": application.id,
+        key=lambda x: x.application_date,
+
+        reverse=True
+
+    )[:5]:
+
+        recent_applications.append({
+
+            "id": application.application_id,
 
             "student": application.student.full_name,
 
-            "role": application.drive.role,
+            "role": application.drive.job_title,
 
             "status": application.status
 
         })
 
 
-    data = {
+    dashboard = {
 
         "company_name": company.company_name,
 
         "total_drives": len(drives),
 
-        "active_drives": len(
-            [d for d in drives if d.status == "Approved"]
-        ),
+        "active_drives": len([
+
+            drive
+
+            for drive in drives
+
+            if drive.status == "Approved"
+
+        ]),
 
         "total_applications": len(applications),
 
-        "shortlisted": len(
-            [a for a in applications if a.status == "Shortlisted"]
-        ),
+        "shortlisted": len([
 
-        "selected": len(
-            [a for a in applications if a.status == "Selected"]
-        ),
+            application
 
-        "recent_applications": recent
+            for application in applications
+
+            if application.status == "Shortlisted"
+
+        ]),
+
+        "selected": len([
+
+            application
+
+            for application in applications
+
+            if application.status == "Selected"
+
+        ]),
+
+        "recent_applications": recent_applications
 
     }
 
-    return data,200
+    return dashboard, 200
+
 
 # ==========================================================
 # COMPANY PROFILE
@@ -92,7 +127,9 @@ def get_dashboard(user_id):
 def get_company_profile(user_id):
 
     company = Company.query.filter_by(
+
         user_id=user_id
+
     ).first()
 
 
@@ -100,111 +137,107 @@ def get_company_profile(user_id):
 
         return {
 
-            "message":"Company profile not found"
+            "message": "Company profile not found"
 
-        },404
-
+        }, 404
 
 
     return {
 
-        "company_id":company.user_id,
+        "company_id": company.user_id,
 
-        "company_name":company.company_name,
+        "company_name": company.company_name,
 
-        "industry":company.industry,
+        "industry": company.industry,
 
-        "location":company.location,
+        "location": company.location,
 
-        "website":company.website,
+        "website": company.website,
 
-        "hr_name":company.hr_name,
+        "description": company.description,
 
-        "hr_email":company.hr_email
+        "hr_name": company.hr_name,
 
-    },200
+        "hr_email": company.hr_email,
 
+        "hr_phone": company.hr_phone,
 
+        "approval_date": company.approval_date,
 
+        "created_at": company.created_at,
 
+        "email": company.user.email,
 
+        "is_approved": company.user.is_approved,
+
+        "is_active": company.user.is_active,
+
+        "is_blacklisted": company.user.is_blacklisted
+
+    }, 200
+    
+    
+    
 # ==========================================================
 # CREATE PLACEMENT DRIVE
 # ==========================================================
 
-def create_drive(user_id,data):
-
+def create_drive(user_id, data):
 
     company = Company.query.filter_by(
         user_id=user_id
     ).first()
 
-
-
     if not company:
 
         return {
-
-            "message":"Company not found"
-
-        },404
-
-
-
+            "message": "Company not found"
+        }, 404
 
     if not company.user.is_approved:
 
-
         return {
-
-            "message":"Company approval pending"
-
-        },403
-
-
-
+            "message": "Company approval pending"
+        }, 403
 
 
     drive = PlacementDrive(
 
         company_id=company.user_id,
 
-        role=data.get("role"),
+        job_title=data.get("job_title"),
 
-        description=data.get("description"),
+        job_description=data.get("job_description"),
 
-        package=data.get("package"),
+        eligible_branches=data.get("eligible_branches"),
 
-        location=data.get("location"),
+        eligible_cgpa=data.get("eligible_cgpa"),
 
-        eligibility=data.get("eligibility"),
+        eligible_year=data.get("eligible_year"),
 
-        deadline=data.get("deadline"),
+        application_deadline=data.get("application_deadline"),
 
-        status="Pending",
+        interview_date=data.get("interview_date"),
 
-        created_at=datetime.utcnow()
+        interview_location=data.get("interview_location"),
+
+        salary_package=data.get("salary_package"),
+
+        status="Pending"
 
     )
-
 
     db.session.add(drive)
 
     db.session.commit()
 
-
-
     return {
 
-        "message":"Placement drive created successfully",
+        "message": "Placement drive created successfully",
 
-        "drive_id":drive.id
+        "drive_id": drive.drive_id
 
-    },201
-
-
-
-
+    }, 201
 
 
 # ==========================================================
@@ -213,238 +246,263 @@ def create_drive(user_id,data):
 
 def get_company_drives(user_id):
 
-
     drives = PlacementDrive.query.filter_by(
 
         company_id=user_id
 
+    ).order_by(
+
+        PlacementDrive.created_at.desc()
+
     ).all()
 
-
-
-    data=[]
-
+    data = []
 
     for drive in drives:
 
-
         data.append({
 
-            "id":drive.id,
+            "drive_id": drive.drive_id,
 
-            "role":drive.role,
+            "job_title": drive.job_title,
 
-            "package":drive.package,
+            "job_description": drive.job_description,
 
-            "location":drive.location,
+            "eligible_branches": drive.eligible_branches,
 
-            "deadline":drive.deadline,
+            "eligible_cgpa": drive.eligible_cgpa,
 
-            "status":drive.status
+            "eligible_year": drive.eligible_year,
+
+            "application_deadline": drive.application_deadline,
+
+            "interview_date": drive.interview_date,
+
+            "interview_location": drive.interview_location,
+
+            "salary_package": drive.salary_package,
+
+            "status": drive.status,
+
+            "created_at": drive.created_at,
+
+            "total_applications": len(drive.applications)
 
         })
 
-
-
-    return data,200
-
-
-
+    return data, 200
 
 
 # ==========================================================
 # UPDATE DRIVE
 # ==========================================================
 
-def update_drive(user_id,drive_id,data):
-
+def update_drive(user_id, drive_id, data):
 
     drive = PlacementDrive.query.filter_by(
 
-        id=drive_id,
+        drive_id=drive_id,
 
         company_id=user_id
 
     ).first()
 
-
-
     if not drive:
-
 
         return {
 
-            "message":"Drive not found"
+            "message": "Drive not found"
 
-        },404
-
-
+        }, 404
 
 
-    drive.role=data.get(
-        "role",
-        drive.role
+    drive.job_title = data.get(
+
+        "job_title",
+
+        drive.job_title
+
     )
 
+    drive.job_description = data.get(
 
-    drive.description=data.get(
-        "description",
-        drive.description
+        "job_description",
+
+        drive.job_description
+
     )
 
+    drive.eligible_branches = data.get(
 
-    drive.package=data.get(
-        "package",
-        drive.package
+        "eligible_branches",
+
+        drive.eligible_branches
+
     )
 
+    drive.eligible_cgpa = data.get(
 
-    drive.location=data.get(
-        "location",
-        drive.location
+        "eligible_cgpa",
+
+        drive.eligible_cgpa
+
     )
 
+    drive.eligible_year = data.get(
 
-    drive.deadline=data.get(
-        "deadline",
-        drive.deadline
+        "eligible_year",
+
+        drive.eligible_year
+
     )
 
+    drive.application_deadline = data.get(
+
+        "application_deadline",
+
+        drive.application_deadline
+
+    )
+
+    drive.interview_date = data.get(
+
+        "interview_date",
+
+        drive.interview_date
+
+    )
+
+    drive.interview_location = data.get(
+
+        "interview_location",
+
+        drive.interview_location
+
+    )
+
+    drive.salary_package = data.get(
+
+        "salary_package",
+
+        drive.salary_package
+
+    )
 
     db.session.commit()
 
-
-
     return {
 
-        "message":"Drive updated successfully"
+        "message": "Drive updated successfully"
 
-    },200
-
-
-
-
+    }, 200
 
 
 # ==========================================================
 # DELETE DRIVE
 # ==========================================================
 
-def delete_drive(user_id,drive_id):
+def delete_drive(user_id, drive_id):
 
+    drive = PlacementDrive.query.filter_by(
 
-    drive=PlacementDrive.query.filter_by(
-
-        id=drive_id,
+        drive_id=drive_id,
 
         company_id=user_id
 
     ).first()
 
-
-
     if not drive:
-
 
         return {
 
-            "message":"Drive not found"
+            "message": "Drive not found"
 
-        },404
-
-
+        }, 404
 
     db.session.delete(drive)
 
     db.session.commit()
 
-
-
     return {
 
-        "message":"Drive deleted successfully"
+        "message": "Drive deleted successfully"
 
-    },200
-
-
-
-
-
-
+    }, 200
+    
+    
 # ==========================================================
-# VIEW APPLICATIONS
+# VIEW APPLICATIONS FOR A DRIVE
 # ==========================================================
 
-def get_drive_applications(user_id,drive_id):
+def get_drive_applications(user_id, drive_id):
 
+    drive = PlacementDrive.query.filter_by(
 
-    drive=PlacementDrive.query.filter_by(
-
-        id=drive_id,
+        drive_id=drive_id,
 
         company_id=user_id
 
     ).first()
 
-
-
     if not drive:
-
 
         return {
 
-            "message":"Drive not found"
+            "message": "Drive not found"
 
-        },404
-
-
+        }, 404
 
 
-
-    applications=Application.query.filter_by(
+    applications = Application.query.filter_by(
 
         drive_id=drive_id
+
+    ).order_by(
+
+        Application.application_date.desc()
 
     ).all()
 
 
-
-    data=[]
-
-
+    data = []
 
     for application in applications:
 
-
-        student=application.student
-
-
+        student = application.student
 
         data.append({
 
-            "application_id":application.id,
+            "application_id": application.application_id,
 
-            "student_id":student.user_id,
+            "student_id": student.user_id,
 
-            "student_name":student.name,
+            "full_name": student.full_name,
 
-            "branch":student.branch,
+            "roll_number": student.roll_number,
 
-            "cgpa":student.cgpa,
+            "branch": student.branch,
 
-            "resume":student.resume,
+            "course": student.course,
 
-            "status":application.status
+            "graduation_year": student.graduation_year,
+
+            "cgpa": student.cgpa,
+
+            "skills": student.skills,
+
+            "resume_path": student.resume_path,
+
+            "application_date": application.application_date,
+
+            "status": application.status,
+
+            "remarks": application.remarks,
+
+            "interview_datetime": application.interview_datetime
 
         })
 
-
-
-    return data,200
-
-
-
-
+    return data, 200
 
 
 # ==========================================================
@@ -453,47 +511,42 @@ def get_drive_applications(user_id,drive_id):
 
 def update_application_status(
 
-        user_id,
+    user_id,
 
-        application_id,
+    application_id,
 
-        status
+    status
 
 ):
 
+    application = Application.query.filter_by(
 
-    application=Application.query.get(
-        application_id
-    )
+        application_id=application_id
 
+    ).first()
 
 
     if not application:
 
-
         return {
 
-            "message":"Application not found"
+            "message": "Application not found"
 
-        },404
-
-
-
+        }, 404
 
 
     if application.drive.company_id != user_id:
 
-
         return {
 
-            "message":"Unauthorized access"
+            "message": "Unauthorized access"
 
-        },403
-
-
+        }, 403
 
 
-    allowed=[
+    allowed_status = [
+
+        "Applied",
 
         "Shortlisted",
 
@@ -504,88 +557,68 @@ def update_application_status(
     ]
 
 
-
-    if status not in allowed:
-
+    if status not in allowed_status:
 
         return {
 
-            "message":"Invalid status"
+            "message": "Invalid status"
 
-        },400
-
-
+        }, 400
 
 
-    application.status=status
-
+    application.status = status
 
     db.session.commit()
 
-
-
     return {
 
-        "message":"Application status updated"
+        "message": "Application status updated successfully"
 
-    },200
-    
-    
-    
-    
+    }, 200
+
+
 # ==========================================================
 # CLOSE PLACEMENT DRIVE
 # ==========================================================
 
 def close_drive(user_id, drive_id):
 
-
     drive = PlacementDrive.query.filter_by(
 
-        id=drive_id,
+        drive_id=drive_id,
 
         company_id=user_id
 
     ).first()
 
 
-
     if not drive:
 
         return {
 
-            "message":"Drive not found"
+            "message": "Drive not found"
 
-        },404
-
-
+        }, 404
 
 
     if drive.status == "Closed":
 
         return {
 
-            "message":"Drive already closed"
+            "message": "Drive already closed"
 
-        },400
-
-
+        }, 400
 
 
     drive.status = "Closed"
 
-
-
     db.session.commit()
-
-
 
     return {
 
-        "message":"Drive closed successfully"
+        "message": "Placement drive closed successfully"
 
-    },200
-    
+    }, 200
     
     
     
@@ -595,61 +628,64 @@ def close_drive(user_id, drive_id):
 
 def get_selected_students(user_id):
 
-
-    applications = Application.query.join(
-
-        PlacementDrive,
-
-        Application.drive_id == PlacementDrive.id
-
-    ).filter(
-
-        PlacementDrive.company_id == user_id,
-
-        Application.status == "Selected"
-
-    ).all()
-
-
+    applications = (
+        Application.query
+        .join(
+            PlacementDrive,
+            Application.drive_id == PlacementDrive.drive_id
+        )
+        .filter(
+            PlacementDrive.company_id == user_id,
+            Application.status == "Selected"
+        )
+        .order_by(
+            Application.application_date.desc()
+        )
+        .all()
+    )
 
     data = []
 
-
-
     for application in applications:
 
-
         student = application.student
-
         drive = application.drive
-
-
 
         data.append({
 
-            "application_id": application.id,
+            "application_id": application.application_id,
 
-            "student": student.full_name,
+            "student_id": student.user_id,
+
+            "student_name": student.full_name,
 
             "roll_number": student.roll_number,
 
+            "email": student.user.email,
+
+            "phone": student.phone,
+
             "branch": student.branch,
+
+            "course": student.course,
+
+            "graduation_year": student.graduation_year,
 
             "cgpa": student.cgpa,
 
-            "role": drive.role,
+            "skills": student.skills,
 
-            "package": drive.package,
+            "resume_path": student.resume_path,
 
-            "selection_date": application.created_at
+            "job_title": drive.job_title,
+
+            "salary_package": drive.salary_package,
+
+            "selection_date": application.application_date
 
         })
 
-
-
-    return data,200
-
-
+    return data, 200
 
 
 # ==========================================================
@@ -659,50 +695,78 @@ def get_selected_students(user_id):
 def get_student_details(user_id, student_id):
 
     student = Student.query.filter_by(
+
         user_id=student_id
+
     ).first()
 
     if not student:
 
         return {
-            "message":"Student not found"
-        },404
+
+            "message": "Student not found"
+
+        }, 404
 
 
-    # Verify that this student has applied to one of the
-    # current company's placement drives
-    has_application = Application.query.join(
-        PlacementDrive
-    ).filter(
-        Application.student_id == student.user_id,
-        PlacementDrive.company_id == user_id
-    ).first()
+    has_application = (
+        Application.query
+        .join(
+            PlacementDrive,
+            Application.drive_id == PlacementDrive.drive_id
+        )
+        .filter(
+            Application.student_id == student.user_id,
+            PlacementDrive.company_id == user_id
+        )
+        .first()
+    )
 
     if not has_application:
 
         return {
-            "message":"Unauthorized access"
-        },403
+
+            "message": "Unauthorized access"
+
+        }, 403
 
 
     return {
 
-        "student_id":student.user_id,
+        "student_id": student.user_id,
 
-        "full_name":student.full_name,
+        "full_name": student.full_name,
 
-        "email":student.user.email,
+        "roll_number": student.roll_number,
 
-        "phone":student.phone,
+        "email": student.user.email,
 
-        "branch":student.branch,
+        "phone": student.phone,
 
-        "year":student.year,
+        "dob": student.dob,
 
-        "cgpa":student.cgpa,
+        "course": student.course,
 
-        "skills":student.skills,
+        "branch": student.branch,
 
-        "resume":student.resume_path
+        "year": student.year,
 
-    },200
+        "graduation_year": student.graduation_year,
+
+        "cgpa": student.cgpa,
+
+        "tenth_marks": student.tenth_marks,
+
+        "twelfth_marks": student.twelfth_marks,
+
+        "address": student.address,
+
+        "skills": student.skills,
+
+        "profile_completed": student.profile_completed,
+
+        "resume_path": student.resume_path,
+
+        "created_at": student.created_at
+
+    }, 200
