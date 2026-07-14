@@ -1,5 +1,5 @@
 import csv
-
+import os
 from io import StringIO
 
 from datetime import datetime
@@ -86,7 +86,7 @@ def export_applications_csv(job_id):
 
             ])
 
-
+        os.makedirs("exports", exist_ok=True)
 
 
         filename = (
@@ -104,7 +104,7 @@ def export_applications_csv(job_id):
         )
 
 
-
+        
         with open(
             file_path,
             "w",
@@ -139,16 +139,17 @@ def export_applications_csv(job_id):
 
 
 
+        
+        
     except Exception as e:
 
+        db.session.rollback()
 
         job.status = "FAILED"
+        job.error_message = str(e)
 
         db.session.commit()
 
-
         return {
-
             "error": str(e)
-
         }

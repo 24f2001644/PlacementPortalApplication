@@ -1,4 +1,7 @@
 from flask import Blueprint, request, jsonify
+from extensions import db
+
+from models.notification import Notification
 
 from flask_jwt_extended import (
     jwt_required,
@@ -320,3 +323,71 @@ def export_applications_csv():
         user_id
 
     )
+    
+    
+    
+@student_bp.route("/notifications", methods=["GET"])
+@jwt_required()
+def get_notifications():
+
+    user_id = get_jwt_identity()
+
+    notifications = Notification.query.filter_by(
+        user_id=user_id
+    ).order_by(
+        Notification.created_at.desc()
+    ).all()
+
+    return jsonify([
+        {
+            "id": n.notification_id,
+            "title": n.title,
+            "message": n.message,
+            "type": n.notification_type,
+            "read": n.is_read,
+            "created_at": n.created_at
+        }
+        for n in notifications
+    ])
+    
+    
+@student_bp.route(
+    "/notifications/<int:id>/read",
+    methods=["PUT"]
+)
+@jwt_required()
+def mark_notification(id):
+
+    user_id = get_jwt_identity()
+
+    notification = Notification.query.filter_by(
+        notification_id=id,
+        user_id=user_id
+    ).first()
+
+    if not notification:
+        return {"message": "Notification not found"},404
+
+    notification.is_read=True
+
+    db.session.commit()
+
+    return {"message":"Notification updated"}
+
+
+
+@student_bp.route(
+    "/notifications/count",
+    methods=["GET"]
+)
+@jwt_required()
+def notification_count():
+
+    user=get_jwt_identity()
+
+    count=Notification.query.filter_by(
+        user_id=user,
+        is_read=False
+    ).count()
+
+    return {"count":count}

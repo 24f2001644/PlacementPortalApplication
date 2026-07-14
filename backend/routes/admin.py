@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-
+from flask import send_file
+from models.export_job import ExportJob
 from flask_jwt_extended import jwt_required
 
 from services.admin_service import (
@@ -293,3 +294,54 @@ def statistics():
     data, status_code = placement_statistics()
 
     return jsonify(data), status_code
+
+
+from tasks.export_tasks import export_applications_csv
+from extensions import db
+
+
+
+@admin_bp.route(
+    "/export-applications",
+    methods=["POST"]
+)
+@jwt_required()
+@admin_required
+def export_applications():
+
+    job = ExportJob(
+        status="PENDING"
+    )
+
+    db.session.add(job)
+    db.session.commit()
+
+    export_applications_csv.delay(job.export_id)
+
+    return jsonify({
+    "message": "Export started",
+    "job_id": job.export_id
+}), 202
+    
+    
+    
+@admin_bp.route(
+    "/exports/<int:job_id>",
+    methods=["GET"]
+)
+@jwt_required()
+@admin_required
+def download_export(job_id):
+
+    job = ExportJob.query.get(job_id)
+
+    if not job:
+        return {"message":"Export not found"},404
+
+    if job.status!="COMPLETED":
+        return {"message":"Export not ready"},400
+
+    return send_file(
+        job.file_path,
+        as_attachment=True
+    )

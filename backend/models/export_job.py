@@ -12,18 +12,17 @@ class ExportJob(db.Model):
 
     student_id = db.Column(
         db.Integer,
-        db.ForeignKey("students.user_id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "students.user_id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
     status = db.Column(
         db.String(20),
-        default="Pending"
+        default="PENDING"
     )
-    # Pending
-    # Processing
-    # Completed
-    # Failed
 
     file_path = db.Column(
         db.String(255)
@@ -42,14 +41,10 @@ class ExportJob(db.Model):
         db.DateTime
     )
 
-    # Relationship
     student = db.relationship(
         "Student",
         back_populates="export_jobs"
     )
 
     def __repr__(self):
-        return (
-            f"<ExportJob {self.export_id} - "
-            f"{self.status}>"
-        )
+        return f"<ExportJob {self.export_id}>"

@@ -71,6 +71,18 @@ def create_app():
         db.create_all()
 
         create_default_admin()
+        
+        
+        
+        
+    @app.route("/health")
+    def health():
+
+        return {
+            "status":"running",
+            "redis":"connected",
+            "celery":"active"
+        }
 
     # =====================================
     # Home Route
