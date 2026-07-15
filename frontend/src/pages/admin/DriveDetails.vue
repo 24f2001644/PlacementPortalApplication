@@ -32,9 +32,11 @@ const drive = reactive({
 
     drive_id: null,
 
-    company: "",
+    company_name: "",
 
     job_title: "",
+
+    job_description: "",
 
     salary_package: "",
 
@@ -343,9 +345,15 @@ onMounted(
 
                                 </h2>
 
+                                <p class="mt-3 text-muted">
+
+                                    {{ drive.job_description }}
+
+                                </p>
+
                                 <p class="text-muted mb-0">
 
-                                    {{ drive.company }}
+                                    {{ drive.company_name }}
 
                                 </p>
 
@@ -461,51 +469,26 @@ onMounted(
 
                     <div class="col-lg-4">
 
-                        <AdminSectionCard
-
-                            title="Drive Status"
-
-                            icon="bi bi-info-circle-fill"
-
-                        >
+                        <AdminSectionCard title="Drive Status">
 
                             <div class="text-center mb-4">
-
                                 <AdminBadge
-
                                     :label="drive.status"
-
                                     :type="badgeType(drive.status)"
-
                                 />
-
                             </div>
 
-                            <div class="d-grid gap-3">
+                            <div class="row gy-3">
 
-                                <AdminButton
+                                <div class="col-12">
+                                    <small class="text-muted">Applications</small>
+                                    <h6>{{ drive.total_applications }}</h6>
+                                </div>
 
-                                    color="success"
-
-                                    icon="bi bi-lock-fill"
-
-                                    text="Close Drive"
-
-                                    @click="closePlacementDrive"
-
-                                />
-
-                                <AdminButton
-
-                                    color="danger"
-
-                                    icon="bi bi-trash-fill"
-
-                                    text="Delete Drive"
-
-                                    @click="deletePlacementDrive"
-
-                                />
+                                <div class="col-12">
+                                    <small class="text-muted">Created On</small>
+                                    <h6>{{ drive.created_at }}</h6>
+                                </div>
 
                             </div>
 
@@ -573,7 +556,7 @@ onMounted(
 
                                                     <div class="fw-semibold">
 
-                                                        {{ student.name }}
+                                                        {{ student.full_name }}
 
                                                     </div>
 
@@ -611,15 +594,7 @@ onMounted(
 
                                                 <td>
 
-                                                    {{
-
-                                                        new Date(
-
-                                                            student.application_date
-
-                                                        ).toLocaleDateString()
-
-                                                    }}
+                                                    {{ student.application_date }}
 
                                                 </td>
 

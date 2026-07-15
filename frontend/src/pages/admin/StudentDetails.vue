@@ -23,31 +23,34 @@ const loading = ref(true)
 
 const student = reactive({
 
-    id:"",
+    user_id: "",
 
-    name:"",
+    full_name: "",
 
-    roll:"",
+    roll_number: "",
 
-    email:"",
+    email: "",
 
-    phone:"",
+    phone: "",
 
-    course:"",
+    course: "",
 
-    branch:"",
+    branch: "",
 
-    cgpa:"",
+    cgpa: "",
 
-    tenth:"",
+    tenth_marks: "",
 
-    twelfth:"",
+    twelfth_marks: "",
 
-    skills:"",
+    skills: "",
 
-    grad:"",
+    graduation_year: "",
 
-    resume:""
+    resume_path: "",
+    resume_url:"",
+
+    profile_completed: false
 
 })
 
@@ -166,7 +169,7 @@ onMounted(loadStudent)
 
                         <strong>Name:</strong>
 
-                        {{ student.name }}
+                        {{ student.full_name }}
 
                     </p>
 
@@ -175,7 +178,7 @@ onMounted(loadStudent)
 
                         <strong>Roll Number:</strong>
 
-                        {{ student.roll }}
+                        {{ student.roll_number }}
 
                     </p>
 
@@ -238,7 +241,7 @@ onMounted(loadStudent)
 
                         <strong>10th Marks:</strong>
 
-                        {{ student.tenth }}
+                        {{ student.tenth_marks }}
 
                     </p>
 
@@ -248,7 +251,7 @@ onMounted(loadStudent)
 
                         <strong>12th Marks:</strong>
 
-                        {{ student.twelfth }}
+                        {{ student.twelfth_marks }}
 
                     </p>
 
@@ -268,7 +271,7 @@ onMounted(loadStudent)
 
                         <strong>Graduation Year:</strong>
 
-                        {{ student.grad }}
+                        {{ student.graduation_year }}
 
                     </p>
 
@@ -278,10 +281,11 @@ onMounted(loadStudent)
 
                         <strong>Status:</strong>
 
-                        <span class="badge bg-success ms-2">
-
-                            Profile Complete
-
+                        <span
+                            class="badge ms-2"
+                            :class="student.profile_completed ? 'bg-success' : 'bg-warning'"
+                        >
+                            {{ student.profile_completed ? "Profile Complete" : "Incomplete Profile" }}
                         </span>
 
                     </p>
@@ -301,7 +305,9 @@ onMounted(loadStudent)
 
             <a
 
-                :href="student.resume"
+                v-if="student.resume_url"
+
+                :href="student.resume_url"
 
                 target="_blank"
 
@@ -315,6 +321,11 @@ onMounted(loadStudent)
 
 
             </a>
+            <p v-else class="text-muted">
+
+                Resume not uploaded
+
+            </p>
 
 
 

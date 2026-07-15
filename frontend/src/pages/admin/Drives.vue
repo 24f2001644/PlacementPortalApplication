@@ -84,8 +84,7 @@ const filteredDrives = computed(() => {
         return drives.value
 
     return drives.value.filter(d =>
-
-        d.company
+        d.company_name
 
             .toLowerCase()
 
@@ -538,7 +537,7 @@ onMounted(() => {
 
                                         <strong>
 
-                                            {{ drive.company }}
+                                           {{ drive.company_name }}
 
                                         </strong>
 
@@ -585,55 +584,34 @@ onMounted(() => {
                                     >
 
                                         <AdminButton
-
                                             color="success"
-
                                             icon="bi bi-check-circle-fill"
-
                                             text="Approve"
-
-                                            :disabled="drive.status==='Approved'"
-
+                                            :disabled="drive.status !== 'Pending'"
                                             @click="approve(drive.drive_id)"
-
                                         />
 
                                         <AdminButton
-
-                                            color="warning"
-
-                                            icon="bi bi-lock-fill"
-
-                                            text="Close"
-
-                                            :disabled="drive.status==='Closed'"
-
-                                            @click="closePlacementDrive(drive.drive_id)"
-
-                                        />
-
-                                        <AdminButton
-
                                             color="danger"
-
                                             icon="bi bi-x-circle-fill"
-
                                             text="Reject"
-
+                                            :disabled="drive.status !== 'Pending'"
                                             @click="openRejectModal(drive)"
-
                                         />
 
                                         <AdminButton
+                                            color="warning"
+                                            icon="bi bi-lock-fill"
+                                            text="Close"
+                                            :disabled="drive.status !== 'Approved'"
+                                            @click="closePlacementDrive(drive.drive_id)"
+                                        />
 
+                                        <AdminButton
                                             color="primary"
-
                                             icon="bi bi-eye-fill"
-
                                             text="Details"
-
                                             @click="openDetails(drive.drive_id)"
-
                                         />
 
                                     </div>

@@ -1,16 +1,24 @@
 <script setup>
 
-defineProps({
+const props = defineProps({
 
-label:String,
+    text: String,
 
-icon:String,
+    icon: String,
 
-variant:String
+    color: {
+        type: String,
+        default: "primary"
+    },
+
+    disabled: {
+        type: Boolean,
+        default: false
+    }
 
 })
 
-const emit=defineEmits(["click"])
+const emit = defineEmits(["click"])
 
 </script>
 
@@ -18,23 +26,23 @@ const emit=defineEmits(["click"])
 
 <button
 
-class="btn"
+    class="btn"
 
-:class="'btn-'+variant"
+    :class="'btn-' + color"
 
-@click="emit('click')"
+    :disabled="disabled"
+
+    @click="emit('click')"
 
 >
 
-<i
+    <i
+        v-if="icon"
+        :class="icon"
+        class="me-2"
+    ></i>
 
-:class="icon"
-
-class="me-2"
-
-></i>
-
-{{ label }}
+    {{ text }}
 
 </button>
 

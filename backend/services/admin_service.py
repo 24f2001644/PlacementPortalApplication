@@ -382,6 +382,17 @@ def get_all_students(search=None):
 
         user = student.user
 
+        selected_application = Application.query.filter_by(
+            student_id=student.user_id,
+            status="Selected"
+        ).first()
+
+        placement_status = (
+            selected_application.status
+            if selected_application
+            else "Not Placed"
+        )
+
         result.append({
 
             "user_id": student.user_id,
@@ -410,6 +421,8 @@ def get_all_students(search=None):
 
             "active": user.is_active,
 
+            "placement_status": placement_status,
+
             "created_at":
                 student.created_at.strftime("%Y-%m-%d %H:%M")
                 if student.created_at
@@ -422,10 +435,6 @@ def get_all_students(search=None):
 
 
 def get_student_details(user_id):
-
-    from models.student import Student
-    from models.user import User
-
 
     student = Student.query.filter_by(
         user_id=user_id
@@ -442,6 +451,17 @@ def get_student_details(user_id):
     user = User.query.filter_by(
         user_id=user_id
     ).first()
+
+
+    resume_url = None
+
+    if student.resume_path:
+
+        resume_url = (
+            "http://127.0.0.1:5000/"
+            +
+            student.resume_path.replace("\\","/")
+        )
 
 
     return {
@@ -482,6 +502,8 @@ def get_student_details(user_id):
 
         "resume_path": student.resume_path,
 
+        "resume_url": resume_url,
+
         "profile_completed": student.profile_completed,
 
         "created_at": (
@@ -490,7 +512,7 @@ def get_student_details(user_id):
             else None
         )
 
-    }, 200
+    },200
 
 # ==========================================================
 # TOGGLE STUDENT STATUS
@@ -1439,28 +1461,3 @@ def get_drive_details(drive_id):
     
     
     
-def get_student_details(user_id):
-
-    student = Student.query.filter_by(
-        user_id=user_id
-    ).first()
-
-
-    if not student:
-        return {
-            "message":"Student not found"
-        },404
-
-
-    return {
-
-        "name": student.full_name,
-        "roll_number": student.roll_number,
-        "branch": student.branch,
-        "course": student.course,
-        "cgpa": student.cgpa,
-        "phone": student.phone,
-        "skills": student.skills,
-        "resume": student.resume_path
-
-    },200

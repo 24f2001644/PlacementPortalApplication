@@ -124,7 +124,7 @@ component:EditProfile
     component: CompanyProfile
 },
 {
-    path: "/company/edit-profile",
+    path: "/company/profile/edit",
     component: CompanyEditProfile
 },
 {

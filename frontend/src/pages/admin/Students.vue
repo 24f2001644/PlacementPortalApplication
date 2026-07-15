@@ -41,13 +41,13 @@ const stats = computed(() => ({
 
     active: students.value.filter(
 
-        s => !s.blocked
+        s => s.active
 
     ).length,
 
     blocked: students.value.filter(
 
-        s => s.blocked
+        s => !s.active
 
     ).length,
 
@@ -73,7 +73,7 @@ const filteredStudents = computed(() => {
 
     return students.value.filter(student =>
 
-        student.name
+        student.full_name
 
             .toLowerCase()
 
@@ -181,11 +181,11 @@ function viewStudent(student) {
 
 function badgeColor(student) {
 
-    if (student.blocked)
+    return student.active
 
-        return "danger"
+        ? "success"
 
-    return "success"
+        : "danger"
 
 }
 
@@ -438,7 +438,7 @@ onMounted(() => {
 
                                         <strong>
 
-                                            {{ student.name }}
+                                            {{ student.full_name }}
 
                                         </strong>
 
@@ -470,11 +470,9 @@ onMounted(() => {
 
                                         :label="
 
-                                            student.blocked
-
-                                            ? 'Blocked'
-
-                                            : 'Active'
+                                            student.active
+                                            ? 'Active'
+                                            : 'Blocked'
 
                                         "
 
@@ -507,11 +505,11 @@ onMounted(() => {
 
                                         <AdminButton
 
-                                            :color="student.blocked ? 'success' : 'danger'"
+                                            :color="student.active ? 'danger' : 'success'"
 
-                                            :icon="student.blocked ? 'bi bi-person-check-fill' : 'bi bi-person-x-fill'"
+                                            :icon="student.active ? 'bi bi-person-x-fill' : 'bi bi-person-check-fill'"
 
-                                            :text="student.blocked ? 'Unblock' : 'Block'"
+                                            :text="student.active ? 'Block' : 'Unblock'"
 
                                             @click="toggleStatus(student)"
 

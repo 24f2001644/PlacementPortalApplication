@@ -204,9 +204,10 @@ onMounted(loadCompanies)
 
                 />
 
+                <div class="table-responsive">
                 <table
 
-                    v-else
+                    
 
                     class="table table-hover align-middle"
 
@@ -287,9 +288,8 @@ onMounted(loadCompanies)
                             <td>
 
                                 <AdminBadge
-
-                                    :status="company.approved ? 'Approved' : 'Pending'"
-
+                                    :label="company.approved ? 'Approved' : 'Pending'"
+                                    :type="company.approved ? 'success' : 'warning'"
                                 />
 
                             </td>
@@ -297,12 +297,9 @@ onMounted(loadCompanies)
                             <td>
 
                                 <AdminBadge
-
-                                    :status="company.blacklisted ? 'Rejected' : 'Selected'"
-
-                                >
-
-                                </AdminBadge>
+                                    :label="company.blacklisted ? 'Blacklisted' : 'Active'"
+                                    :type="company.blacklisted ? 'danger' : 'success'"
+                                />
 
                             </td>
 
@@ -315,41 +312,28 @@ onMounted(loadCompanies)
                                 >
 
                                     <AdminButton
-
                                         text="Approve"
-
-                                        icon="bi bi-check-circle"
-
+                                        icon="bi bi-check-circle-fill"
+                                        
                                         color="success"
-
-                                        :disabled="company.approved"
-
+                                        :disabled="company.approved || company.blacklisted"
                                         @click="approve(company.user_id)"
-
                                     />
 
                                     <AdminButton
-
                                         :text="company.blacklisted ? 'Unblacklist' : 'Blacklist'"
-
-                                        icon="bi bi-slash-circle"
-
+                                        icon="bi bi-slash-circle-fill"
                                         color="warning"
-
+                                        :disabled="!company.approved && !company.blacklisted"
                                         @click="blacklist(company.user_id)"
-
                                     />
 
                                     <AdminButton
-
                                         text="Reject"
-
-                                        icon="bi bi-trash"
-
+                                        icon="bi bi-x-circle-fill"
                                         color="danger"
-
+                                        :disabled="company.approved || company.blacklisted"
                                         @click="reject(company.user_id)"
-
                                     />
 
                                 </div>
@@ -361,6 +345,7 @@ onMounted(loadCompanies)
                     </tbody>
 
                 </table>
+                </div>
 
             </AdminTableCard>
 
@@ -371,3 +356,38 @@ onMounted(loadCompanies)
 </div>
 
 </template>
+
+
+.admin-layout{
+    min-height:100vh;
+    background:#f5f7fb;
+}
+
+.table{
+    margin-bottom:0;
+}
+
+.table thead th{
+    background:#fafbff;
+    border-bottom:2px solid #eef2f7;
+    color:#4b5563;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.table tbody td{
+    padding:18px 14px;
+    vertical-align:middle;
+}
+
+.table tbody tr{
+    transition:.25s;
+}
+
+.table tbody tr:hover{
+    background:#f8faff;
+}
+
+.table-responsive{
+    overflow-x:auto;
+}

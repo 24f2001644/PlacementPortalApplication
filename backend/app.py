@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 
 from config import Config
@@ -81,6 +81,10 @@ def create_app():
     app.register_blueprint(company_bp)
 
     app.register_blueprint(student_bp)
+    
+    
+    
+
 
     # =====================================
     # Create Default Admin
@@ -115,6 +119,11 @@ def create_app():
             "status": "success",
             "message": "Placement Portal Backend Running"
         }
+        
+        
+    @app.route("/uploads/<path:filename>")
+    def uploaded_file(filename):
+        return send_from_directory("uploads", filename)
 
     return app
 

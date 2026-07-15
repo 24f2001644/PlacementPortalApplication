@@ -12,7 +12,9 @@ import CompanyStatusBadge from "../../components/company/CompanyStatusBadge.vue"
 import CompanyLoading from "../../components/company/CompanyLoading.vue"
 import CompanyEmptyState from "../../components/company/CompanyEmptyState.vue"
 
+import { useRoute } from "vue-router"
 
+const route = useRoute()
 
 import {
 
@@ -46,7 +48,7 @@ async function loadApplications(){
     try{
 
 
-        applications.value = await getApplications()
+        applications.value = await getApplications(route.params.id)
 
 
 
