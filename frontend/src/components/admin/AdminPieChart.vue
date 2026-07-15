@@ -1,12 +1,11 @@
 <script setup>
 
+
 import {
-
-Pie
-
+    Pie
 }
-
 from "vue-chartjs"
+
 
 import {
 
@@ -19,54 +18,57 @@ Tooltip,
 Legend
 
 }
-
 from "chart.js"
+
 
 ChartJS.register(
 
-ArcElement,
+    ArcElement,
 
-Tooltip,
+    Tooltip,
 
-Legend
+    Legend
 
 )
 
-const props=defineProps({
 
-labels:Array,
 
-values:Array
+const props = defineProps({
+
+    labels:{
+        type:Array,
+        default:()=>[]
+    },
+
+    values:{
+        type:Array,
+        default:()=>[]
+    }
 
 })
 
+
+
 const data={
 
+
 labels:props.labels,
+
 
 datasets:[
 
 {
 
-data:props.values,
-
-backgroundColor:[
-
-"#6366f1",
-
-"#22c55e",
-
-"#f59e0b",
-
-"#ef4444"
-
-]
+data:props.values
 
 }
 
 ]
 
+
 }
+
+
 
 const options={
 
@@ -74,27 +76,18 @@ responsive:true,
 
 maintainAspectRatio:false
 
+
 }
+
 
 </script>
 
+
 <template>
 
-<div class="card admin-card">
 
-<div class="card-header">
+<div style="height:320px">
 
-Applications
-
-</div>
-
-<div
-
-style="height:320px"
-
-class="p-3"
-
->
 
 <Pie
 
@@ -104,8 +97,8 @@ class="p-3"
 
 />
 
-</div>
 
 </div>
+
 
 </template>

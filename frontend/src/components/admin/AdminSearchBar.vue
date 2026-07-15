@@ -1,42 +1,66 @@
 <script setup>
 
-import { ref,watch } from "vue"
+defineProps({
 
-const emit = defineEmits(["search"])
+    modelValue:{
+        type:String,
+        default:""
+    },
 
-const search = ref("")
-
-watch(search,()=>{
-
-    emit("search",search.value)
+    placeholder:{
+        type:String,
+        default:"Search..."
+    }
 
 })
 
+
+defineEmits([
+
+    "update:modelValue"
+
+])
+
+
 </script>
+
 
 <template>
 
-<div class="search-box">
+
+<div class="search-wrapper">
+
 
     <i class="bi bi-search"></i>
 
+
     <input
 
-        v-model="search"
+        :value="modelValue"
 
-        placeholder="Search..."
+        @input="
+        $emit(
+            'update:modelValue',
+            $event.target.value
+        )
+        "
 
-    >
+        :placeholder="placeholder"
+
+    />
+
 
 </div>
 
+
 </template>
+
+
 
 <style scoped>
 
-.search-box{
 
-    background:white;
+.search-wrapper{
 
     display:flex;
 
@@ -44,17 +68,27 @@ watch(search,()=>{
 
     gap:10px;
 
-    padding:12px 18px;
+    height:42px;
 
-    border-radius:12px;
+    border:1px solid #e2e8f0;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    border-radius:8px;
 
-    margin-bottom:25px;
+    background:white;
+
+    padding:0 15px;
 
 }
 
-.search-box input{
+
+.search-wrapper i{
+
+    color:#64748b;
+
+}
+
+
+.search-wrapper input{
 
     border:none;
 
@@ -62,16 +96,9 @@ watch(search,()=>{
 
     width:100%;
 
-    font-size:15px;
+    font-size:14px;
 
 }
 
-.search-box i{
-
-    color:#6366f1;
-
-    font-size:18px;
-
-}
 
 </style>

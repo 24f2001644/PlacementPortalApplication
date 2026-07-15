@@ -1,111 +1,97 @@
 <script setup>
 
 import {
-
-Bar
-
-}
-
-from "vue-chartjs"
+    Bar
+} from "vue-chartjs"
 
 import {
-
-Chart as ChartJS,
-
-CategoryScale,
-
-LinearScale,
-
-BarElement,
-
-Tooltip,
-
-Legend
-
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip,
+    Legend
 }
-
 from "chart.js"
 
+
 ChartJS.register(
-
-CategoryScale,
-
-LinearScale,
-
-BarElement,
-
-Tooltip,
-
-Legend
-
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip,
+    Legend
 )
+
 
 const props = defineProps({
 
-labels:Array,
+    labels:{
+        type:Array,
+        default:()=>[]
+    },
 
-values:Array
+    values:{
+        type:Array,
+        default:()=>[]
+    }
 
 })
 
-const data={
 
-labels:props.labels,
+const data = {
 
-datasets:[
+    labels: props.labels,
 
-{
+    datasets:[
 
-label:"Students",
+        {
 
-data:props.values,
+            label:"Students",
 
-backgroundColor:"#6366f1"
+            data:props.values
+
+        }
+
+    ]
 
 }
 
-]
 
-}
 
 const options={
 
-responsive:true,
+    responsive:true,
 
-maintainAspectRatio:false
+    maintainAspectRatio:false,
+
+    plugins:{
+
+        legend:{
+            display:true
+        }
+
+    }
 
 }
 
+
 </script>
+
 
 <template>
 
-<div class="card admin-card">
+<div style="height:320px">
 
-<div class="card-header">
+    <Bar
 
-Branch Wise Students
+        :data="data"
 
-</div>
+        :options="options"
 
-<div
-
-style="height:320px"
-
-class="p-3"
-
->
-
-<Bar
-
-:data="data"
-
-:options="options"
-
-/>
+    />
 
 </div>
 
-</div>
 
 </template>

@@ -1,75 +1,126 @@
 <script setup>
 
+import { computed } from "vue"
+
+
 const props = defineProps({
 
-    title: String,
+    title:{
+        type:String,
+        default:""
+    },
 
-    value: Number,
+    label:{
+        type:String,
+        default:""
+    },
 
-    total: Number,
+    value:{
+        type:Number,
+        default:0
+    },
 
-    color: String
+    total:{
+        type:Number,
+        default:0
+    },
+
+    color:{
+        type:String,
+        default:"primary"
+    }
 
 })
 
-const percentage = computed(() => {
 
-    if (!props.total) return 0
+const percentage = computed(()=>{
 
-    return Math.round((props.value / props.total) * 100)
+    if(props.total <= 0)
+        return 0
+
+    return Math.round(
+        (props.value / props.total) * 100
+    )
 
 })
 
-import { computed } from "vue"
 
 </script>
 
+
 <template>
+
 
 <div class="card admin-card shadow-sm h-100">
 
-    <div class="card-body">
 
-        <div class="d-flex justify-content-between">
+<div class="card-body">
 
-            <h6>{{ title }}</h6>
 
-            <strong>{{ percentage }}%</strong>
+<div class="d-flex justify-content-between">
 
-        </div>
 
-        <div class="progress mt-3">
+<h6>
 
-            <div
+{{title}}
 
-                class="progress-bar"
+</h6>
 
-                :class="'bg-'+color"
 
-                :style="{
+<strong>
 
-                    width: percentage+'%'
+{{percentage}}%
 
-                }"
+</strong>
 
-            >
-
-            </div>
-
-        </div>
-
-        <div class="mt-3">
-
-            {{ value }}
-
-            /
-
-            {{ total }}
-
-        </div>
-
-    </div>
 
 </div>
+
+
+
+<div class="progress mt-3">
+
+
+<div
+
+class="progress-bar"
+
+:class="'bg-'+color"
+
+:style="{
+width:percentage+'%'
+}"
+
+>
+
+</div>
+
+
+</div>
+
+
+
+<div class="mt-3 text-muted">
+
+
+{{label}}
+
+:
+
+{{value}}
+
+/
+
+{{total}}
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
 
 </template>

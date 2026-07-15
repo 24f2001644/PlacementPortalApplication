@@ -1,164 +1,271 @@
 <script setup>
 
-import { ref, computed, onMounted } from "vue"
+import { 
+    ref, 
+    computed, 
+    onMounted 
+} from "vue"
+
 
 import AdminSidebar from "../../components/admin/AdminSidebar.vue"
 import AdminNavbar from "../../components/admin/AdminNavbar.vue"
 import AdminPageHeader from "../../components/admin/AdminPageHeader.vue"
+
 import AdminStatsCard from "../../components/admin/AdminStatsCard.vue"
 import AdminSectionCard from "../../components/admin/AdminSectionCard.vue"
 import AdminTableCard from "../../components/admin/AdminTableCard.vue"
+
 import AdminLoading from "../../components/admin/AdminLoading.vue"
 import AdminEmptyState from "../../components/admin/AdminEmptyState.vue"
+
 import AdminBarChart from "../../components/admin/AdminBarChart.vue"
 import AdminPieChart from "../../components/admin/AdminPieChart.vue"
 import AdminProgressCard from "../../components/admin/AdminProgressCard.vue"
 
+
 import {
-
     getStatistics
+}
+from "../../services/admin"
 
-} from "../../services/admin"
+
 
 const loading = ref(true)
 
+
+
 const statistics = ref({
 
-    total_students: 0,
+    total_students:0,
 
-    eligible_students: 0,
+    active_students:0,
 
-    companies: 0,
+    blocked_students:0,
 
-    active_drives: 0,
 
-    applications: 0,
+    total_companies:0,
 
-    placed_students: 0,
+    approved_companies:0,
 
-    placement_percentage: 0,
+    pending_companies:0,
 
-    highest_package: 0,
 
-    average_package: 0,
+    total_drives:0,
 
-    branches: [],
+    approved_drives:0,
 
-    recent_activity: []
+    pending_drives:0,
+
+
+    total_applications:0,
+
+
+    applied:0,
+
+    shortlisted:0,
+
+    selected:0,
+
+    rejected:0,
+
+
+    placement_percentage:0,
+
+
+    branch_statistics:[],
+
+    company_statistics:[],
+
+    monthly_registrations:[]
 
 })
 
-/* =========================================
-   Statistics Cards
-========================================= */
 
-const cards = computed(() => [
 
-    {
 
-        title: "Students",
 
-        value: statistics.value.total_students,
+/*
+==========================================
+CARDS
+==========================================
+*/
 
-        color: "primary",
 
-        icon: "bi bi-people-fill"
+const cards = computed(()=>[
 
-    },
 
-    {
+{
+    title:"Students",
+    value:statistics.value.total_students,
+    color:"primary",
+    icon:"bi bi-people-fill"
+},
 
-        title: "Eligible",
 
-        value: statistics.value.eligible_students,
+{
+    title:"Active Students",
+    value:statistics.value.active_students,
+    color:"success",
+    icon:"bi bi-person-check-fill"
+},
 
-        color: "success",
 
-        icon: "bi bi-person-check-fill"
+{
+    title:"Companies",
+    value:statistics.value.total_companies,
+    color:"warning",
+    icon:"bi bi-building"
+},
 
-    },
 
-    {
+{
+    title:"Placement Drives",
+    value:statistics.value.total_drives,
+    color:"info",
+    icon:"bi bi-briefcase-fill"
+},
 
-        title: "Companies",
 
-        value: statistics.value.companies,
+{
+    title:"Applications",
+    value:statistics.value.total_applications,
+    color:"secondary",
+    icon:"bi bi-file-earmark-text"
+},
 
-        color: "warning",
 
-        icon: "bi bi-buildings"
+{
+    title:"Selected Students",
+    value:statistics.value.selected,
+    color:"success",
+    icon:"bi bi-award-fill"
+},
 
-    },
 
-    {
+{
+    title:"Placement %",
+    value:statistics.value.placement_percentage+"%",
+    color:"danger",
+    icon:"bi bi-graph-up"
+},
 
-        title: "Active Drives",
 
-        value: statistics.value.active_drives,
+{
+    title:"Approved Companies",
+    value:statistics.value.approved_companies,
+    color:"primary",
+    icon:"bi bi-patch-check"
+}
 
-        color: "info",
-
-        icon: "bi bi-briefcase-fill"
-
-    },
-
-    {
-
-        title: "Applications",
-
-        value: statistics.value.applications,
-
-        color: "secondary",
-
-        icon: "bi bi-file-earmark-text-fill"
-
-    },
-
-    {
-
-        title: "Placed",
-
-        value: statistics.value.placed_students,
-
-        color: "success",
-
-        icon: "bi bi-award-fill"
-
-    },
-
-    {
-
-        title: "Placement %",
-
-        value: statistics.value.placement_percentage + "%",
-
-        color: "danger",
-
-        icon: "bi bi-graph-up-arrow"
-
-    },
-
-    {
-
-        title: "Highest Package",
-
-        value: statistics.value.highest_package,
-
-        color: "primary",
-
-        icon: "bi bi-cash-stack"
-
-    }
 
 ])
 
+
+
+
+
+/*
+==========================================
+BAR CHART DATA
+==========================================
+*/
+
+
+const branchChart = computed(()=>{
+
+
+return {
+
+
+labels:
+
+statistics.value.branch_statistics.map(
+    item=>item.branch
+),
+
+
+values:
+
+statistics.value.branch_statistics.map(
+    item=>item.students
+)
+
+
+}
+
+
+})
+
+
+
+
+
+/*
+==========================================
+APPLICATION PIE DATA
+==========================================
+*/
+
+
+const applicationChart = computed(()=>{
+
+
+return {
+
+
+labels:[
+
+"Applied",
+
+"Shortlisted",
+
+"Selected",
+
+"Rejected"
+
+],
+
+
+values:[
+
+statistics.value.applied,
+
+statistics.value.shortlisted,
+
+statistics.value.selected,
+
+statistics.value.rejected
+
+]
+
+
+}
+
+
+})
+
+
+
+
+
+
 async function loadStatistics(){
 
-    loading.value = true
+    loading.value=true
 
     try{
 
-        statistics.value = await getStatistics()
+        const response = await getStatistics()
+
+
+        statistics.value = {
+
+            ...statistics.value,
+
+            ...response
+
+        }
+
 
     }
 
@@ -166,57 +273,63 @@ async function loadStatistics(){
 
         console.error(error)
 
-        alert("Unable to load statistics")
+        alert(
+            "Unable to load statistics"
+        )
 
     }
 
     finally{
 
-        loading.value = false
+        loading.value=false
 
     }
 
 }
 
+
+
+
 onMounted(loadStatistics)
+
+
 
 </script>
 
 
+
+
+
 <template>
+
 
 <div class="admin-layout">
 
 
-    <!-- Sidebar -->
-
-    <AdminSidebar />
+    <AdminSidebar/>
 
 
     <div class="admin-content">
 
 
-        <!-- Navbar -->
-
-        <AdminNavbar />
+        <AdminNavbar/>
 
 
-        <div class="container-fluid mt-4">
+
+        <div class="container-fluid p-4">
 
 
-            <!-- Page Header -->
 
             <AdminPageHeader
 
                 title="Placement Statistics"
 
-                subtitle="Overview of placement activities, students and companies"
+                subtitle="Overall placement analytics"
 
             />
 
 
 
-            <!-- Loading -->
 
             <AdminLoading
 
@@ -226,22 +339,23 @@ onMounted(loadStatistics)
 
 
 
+
             <template v-else>
 
 
 
-                <!-- Statistics Cards -->
+                <!-- CARDS -->
 
-                <div class="row g-3 mb-4">
+                <div class="row g-4 mb-4">
 
 
                     <div
 
-                        class="col-md-3"
+                    v-for="card in cards"
 
-                        v-for="card in cards"
+                    :key="card.title"
 
-                        :key="card.title"
+                    class="col-xl-3 col-lg-4 col-md-6"
 
                     >
 
@@ -268,17 +382,15 @@ onMounted(loadStatistics)
 
 
 
-                <!-- Charts Section -->
+
+                <!-- CHARTS -->
 
 
                 <div class="row g-4 mb-4">
 
 
 
-                    <!-- Branch Wise Students -->
-
-
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
 
 
                         <AdminSectionCard
@@ -288,11 +400,40 @@ onMounted(loadStatistics)
                         >
 
 
+
                             <AdminBarChart
 
-                                :data="statistics.branches"
+
+                                v-if="
+                                branchChart.labels.length
+                                "
+
+
+                                :labels="
+                                branchChart.labels
+                                "
+
+
+                                :values="
+                                branchChart.values
+                                "
+
 
                             />
+
+
+
+                            <AdminEmptyState
+
+                                v-else
+
+                                title="No Branch Data"
+
+                                description=
+                                "No student branch information available"
+
+                            />
+
 
 
                         </AdminSectionCard>
@@ -304,29 +445,37 @@ onMounted(loadStatistics)
 
 
 
-                    <!-- Placement Distribution -->
 
-
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
 
 
                         <AdminSectionCard
 
-                            title="Placement Distribution"
+                            title="Application Status"
 
                         >
 
 
+
                             <AdminPieChart
 
-                                :placed="statistics.placed_students"
 
-                                :total="statistics.total_students"
+                                :labels="
+                                applicationChart.labels
+                                "
+
+
+                                :values="
+                                applicationChart.values
+                                "
+
 
                             />
 
 
+
                         </AdminSectionCard>
+
 
 
                     </div>
@@ -341,13 +490,14 @@ onMounted(loadStatistics)
 
 
 
-                <!-- Package Information -->
 
+                <!-- PROGRESS -->
 
                 <div class="row g-4 mb-4">
 
 
-                    <div class="col-md-6">
+
+                    <div class="col-lg-6">
 
 
                         <AdminProgressCard
@@ -356,7 +506,11 @@ onMounted(loadStatistics)
 
                             label="Students Placed"
 
-                            :value="statistics.placement_percentage"
+                            :value="statistics.selected || 0"
+
+                            :total="statistics.total_students || 0"
+
+                            color="success"
 
                         />
 
@@ -366,16 +520,20 @@ onMounted(loadStatistics)
 
 
 
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
 
 
                         <AdminProgressCard
 
-                            title="Average Package"
+                            title="Company Approval"
 
-                            label="Average Salary"
+                            label="Approved Companies"
 
-                            :value="statistics.average_package"
+                            :value="statistics.approved_companies || 0"
+
+                            :total="statistics.total_companies || 0"
+
+                            color="primary"
 
                         />
 
@@ -391,146 +549,111 @@ onMounted(loadStatistics)
 
 
 
-                <!-- Recent Activity -->
+
+                <!-- COMPANY TABLE -->
 
 
                 <AdminTableCard
 
-                    title="Recent Placement Activity"
-
+                    title="Company Hiring Statistics"
 
                 >
 
 
-                    <table
 
-                        class="table table-hover"
+                <table class="table table-hover">
+
+
+                    <thead>
+
+
+                        <tr>
+
+                            <th>
+                                Company
+                            </th>
+
+
+                            <th>
+                                Drives
+                            </th>
+
+
+                            <th>
+                                Selected Students
+                            </th>
+
+
+                        </tr>
+
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+
+                    <tr
+
+                    v-for="company in statistics.company_statistics"
+
+                    :key="company.company_name"
 
                     >
 
 
-                        <thead>
+                        <td>
+                            {{company.company_name}}
+                        </td>
 
 
-                            <tr>
+                        <td>
+                            {{company.total_drives}}
+                        </td>
 
 
-                                <th>
+                        <td>
+                            {{company.selected_students}}
+                        </td>
 
-                                    Activity
 
-                                </th>
 
+                    </tr>
 
-                                <th>
 
-                                    Date
 
-                                </th>
+                    <tr
 
+                    v-if="
+                    statistics.company_statistics.length===0
+                    "
 
-                                <th>
+                    >
 
-                                    Status
+                        <td
+                        colspan="3"
+                        class="text-center"
+                        >
 
-                                </th>
+                            No Company Data
 
+                        </td>
 
-                            </tr>
 
+                    </tr>
 
-                        </thead>
 
+                    </tbody>
 
 
-                        <tbody>
-
-
-
-                            <tr
-
-                                v-for="item in statistics.recent_activity"
-
-                                :key="item.id"
-
-                            >
-
-
-                                <td>
-
-                                    {{ item.message }}
-
-                                </td>
-
-
-
-                                <td>
-
-                                    {{ item.date }}
-
-                                </td>
-
-
-
-                                <td>
-
-
-                                    <span
-
-                                        class="badge bg-success"
-
-                                    >
-
-                                        {{ item.status }}
-
-                                    </span>
-
-
-                                </td>
-
-
-                            </tr>
-
-
-
-                            <tr
-
-                                v-if="statistics.recent_activity.length===0"
-
-                            >
-
-
-                                <td
-
-                                    colspan="3"
-
-                                    class="text-center"
-
-                                >
-
-
-                                    <AdminEmptyState
-
-                                        message="No recent activities"
-
-                                    />
-
-
-                                </td>
-
-
-                            </tr>
-
-
-
-                        </tbody>
-
-
-                    </table>
-
+                </table>
 
 
                 </AdminTableCard>
+
+
 
 
 
@@ -541,7 +664,9 @@ onMounted(loadStatistics)
         </div>
 
 
+
     </div>
+
 
 
 </div>
@@ -551,16 +676,19 @@ onMounted(loadStatistics)
 </template>
 
 
+
+
+
 <style scoped>
 
 
 .admin-layout{
 
-    display:flex;
+display:flex;
 
-    min-height:100vh;
+min-height:100vh;
 
-    background:#f8f9fa;
+background:#f8fafc;
 
 }
 
@@ -568,26 +696,7 @@ onMounted(loadStatistics)
 
 .admin-content{
 
-    flex:1;
-
-}
-
-
-
-.container-fluid{
-
-    padding-left:25px;
-
-    padding-right:25px;
-
-}
-
-
-
-
-.card{
-
-    border-radius:15px;
+flex:1;
 
 }
 
@@ -595,32 +704,17 @@ onMounted(loadStatistics)
 
 .table{
 
-    margin-bottom:0;
+margin-bottom:0;
 
 }
 
 
 
-.badge{
+.table th{
 
-    padding:8px 12px;
+background:#f1f5f9;
 
-    border-radius:20px;
-
-}
-
-
-
-
-@media(max-width:768px){
-
-
-    .admin-content{
-
-        margin-left:0;
-
-    }
-
+font-weight:700;
 
 }
 

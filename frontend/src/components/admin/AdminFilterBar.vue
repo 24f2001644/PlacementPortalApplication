@@ -1,106 +1,93 @@
 <script setup>
 
-import { ref } from "vue"
 
-const search = ref("")
-const status = ref("")
+defineProps({
 
-const emit = defineEmits([
+    modelValue:{
+        type:String,
+        default:""
+    },
 
-    "filter"
+
+    options:{
+        type:Array,
+        default:()=>[]
+    }
+
+})
+
+
+defineEmits([
+
+    "update:modelValue"
 
 ])
 
-function applyFilter(){
-
-    emit(
-
-        "filter",
-
-        {
-
-            search:search.value,
-
-            status:status.value
-
-        }
-
-    )
-
-}
 
 </script>
 
+
 <template>
 
-<div class="filter-bar">
 
-    <input
-        class="form-control"
-        placeholder="Search..."
-        v-model="search"
-    >
+<select
 
-    <select
-        class="form-select"
-        v-model="status"
-    >
+    class="form-select"
 
-        <option value="">
+    :value="modelValue"
 
-            All Status
+    @change="
+    $emit(
+        'update:modelValue',
+        $event.target.value
+    )
+    "
 
-        </option>
+>
 
-        <option>
 
-            Approved
+<option value="">
 
-        </option>
+    All Status
 
-        <option>
+</option>
 
-            Pending
 
-        </option>
 
-        <option>
+<option
 
-            Rejected
+    v-for="item in options"
 
-        </option>
+    :key="item"
 
-    </select>
+>
 
-    <button
-        class="btn btn-primary"
-        @click="applyFilter"
-    >
-        Filter
-    </button>
+    {{item}}
 
-</div>
+</option>
+
+
+</select>
+
 
 </template>
 
+
+
 <style scoped>
 
-.filter-bar{
 
-display:flex;
+.form-select{
 
-gap:15px;
+    height:42px;
 
-background:white;
+    border-radius:8px;
 
-padding:18px;
+    border:1px solid #e2e8f0;
 
-border-radius:16px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.05);
-
-margin-bottom:25px;
+    font-size:14px;
 
 }
+
 
 </style>

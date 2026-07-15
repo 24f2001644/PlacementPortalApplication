@@ -2,6 +2,7 @@
 
 import { ref, computed, onMounted } from "vue"
 
+
 import AdminSidebar from "../../components/admin/AdminSidebar.vue"
 import AdminNavbar from "../../components/admin/AdminNavbar.vue"
 import AdminPageHeader from "../../components/admin/AdminPageHeader.vue"
@@ -13,13 +14,14 @@ import AdminButton from "../../components/admin/AdminButton.vue"
 import AdminLoading from "../../components/admin/AdminLoading.vue"
 import AdminEmptyState from "../../components/admin/AdminEmptyState.vue"
 
+
 import {
-
     getApplications,
-
     updateApplicationStatus
+}
+from "../../services/admin"
 
-} from "../../services/admin"
+
 
 const loading = ref(false)
 
@@ -29,65 +31,102 @@ const status = ref("")
 
 const applications = ref([])
 
-const statusOptions = [
+
+
+const statusOptions=[
 
     "Applied",
-
     "Shortlisted",
-
     "Selected",
-
     "Rejected"
 
 ]
 
+
+
+
 async function loadApplications(){
 
-    loading.value = true
+
+    loading.value=true
+
 
     try{
 
+
         applications.value = await getApplications(
+            search.value,
+            status.value
+        )
 
-    search.value,
-
-    status.value
-
-)
 
     }
 
-    catch(err){
+    catch(error){
 
-        console.error(err)
+        console.error(error)
 
         alert("Unable to load applications")
 
     }
 
+
     finally{
 
-        loading.value = false
+        loading.value=false
 
     }
 
+
 }
 
-const filteredApplications = computed(()=>{
 
-    return applications.value.filter(app=>{
 
-        if(status.value==="") return true
 
-        return app.status===status.value
 
-    })
+function handleSearch(value){
+
+    search.value=value
+
+    loadApplications()
+
+}
+
+
+
+
+function handleFilter(data){
+
+
+    status.value=data.status || ""
+
+    search.value=data.search || ""
+
+    loadApplications()
+
+
+}
+
+
+
+
+const filteredApplications=computed(()=>{
+
+
+    return applications.value
+
 
 })
 
+
+
+
+
 async function approve(app){
 
+
     try{
+
 
         await updateApplicationStatus(
 
@@ -97,23 +136,32 @@ async function approve(app){
 
         )
 
+
         await loadApplications()
+
 
     }
 
-    catch(err){
+    catch(error){
 
-        console.error(err)
+        console.error(error)
 
         alert("Unable to update application")
 
     }
 
+
 }
+
+
+
+
 
 async function reject(app){
 
+
     try{
+
 
         await updateApplicationStatus(
 
@@ -123,35 +171,75 @@ async function reject(app){
 
         )
 
+
         await loadApplications()
+
 
     }
 
-    catch(err){
+    catch(error){
 
-        console.error(err)
+        console.error(error)
 
         alert("Unable to update application")
 
     }
 
+
 }
+
+
+
+
+function getStatusColor(status){
+
+
+    if(status==="Selected")
+        return "success"
+
+
+    if(status==="Rejected")
+        return "danger"
+
+
+    if(status==="Shortlisted")
+        return "warning"
+
+
+    return "primary"
+
+
+}
+
+
+
 
 onMounted(loadApplications)
 
+
 </script>
+
+
+
 
 <template>
 
-<div class="d-flex admin-layout">
+
+<div class="admin-layout">
+
 
     <AdminSidebar/>
 
-    <div class="flex-grow-1">
+
+    <div class="admin-content">
+
 
         <AdminNavbar/>
 
-        <div class="container-fluid p-4">
+
+
+        <div class="container-fluid page-padding">
+
 
             <AdminPageHeader
 
@@ -161,55 +249,53 @@ onMounted(loadApplications)
 
             />
 
+
+
             <AdminTableCard>
 
-                <div class="row mb-4">
 
-                    <div class="col-lg-6">
+
+
+                <div class="toolbar">
+
+
+                    <div class="search-area">
+
 
                         <AdminSearchBar
 
-                            v-model="search"
+                            placeholder="Search Student, Company, Role"
 
-                            placeholder="Search Student"
-
-                            @keyup.enter="loadApplications"
+                            @search="handleSearch"
 
                         />
 
+
                     </div>
 
-                    <div class="col-lg-3">
+
+
+                    <div class="filter-area">
+
 
                         <AdminFilterBar
 
-                            v-model="status"
-
-                            label="Status"
-
                             :options="statusOptions"
+
+                            @filter="handleFilter"
 
                         />
 
-                    </div>
-
-                    <div class="col-lg-3 text-end">
-
-                        <button
-
-                            class="btn btn-primary"
-
-                            @click="loadApplications"
-
-                        >
-
-                            Search
-
-                        </button>
 
                     </div>
+
+
 
                 </div>
+
+
+
+
 
                 <AdminLoading
 
@@ -217,136 +303,359 @@ onMounted(loadApplications)
 
                 />
 
+
+
+
                 <AdminEmptyState
 
                     v-else-if="filteredApplications.length===0"
 
                     title="No Applications Found"
 
-                    message="No application matches your filters."
+                    description="No applications match your search."
+
+                    icon="bi bi-file-earmark-text"
 
                 />
+
+
+
+
 
                 <table
 
                     v-else
 
-                    class="table table-hover align-middle"
+                    class="table table-hover"
 
                 >
 
+
+
                     <thead>
 
-                        <tr>
+                    <tr>
 
-                            <th>Student</th>
+                        <th>
+                            Student
+                        </th>
 
-                            <th>Company</th>
 
-                            <th>Role</th>
+                        <th>
+                            Company
+                        </th>
 
-                            <th>Status</th>
 
-                            <th class="text-center">
+                        <th>
+                            Role
+                        </th>
 
-                                Actions
 
-                            </th>
+                        <th>
+                            Status
+                        </th>
 
-                        </tr>
+
+                        <th class="text-center">
+                            Actions
+                        </th>
+
+
+                    </tr>
+
 
                     </thead>
 
+
+
+
                     <tbody>
 
-                        <tr
 
-                            v-for="app in filteredApplications"
 
-                            :key="app.application_id"
+                    <tr
 
-                        >
+                    v-for="app in filteredApplications"
 
-                            <td>
+                    :key="app.application_id"
 
-                                <strong>
+                    >
 
-                                    {{ app.student_name }}
 
-                                </strong>
 
-                            </td>
+                        <td>
 
-                            <td>
+                            <strong>
 
-                                {{ app.company }}
+                                {{app.student_name}}
 
-                            </td>
+                            </strong>
 
-                            <td>
+                        </td>
 
-                                {{ app.job_title }}
 
-                            </td>
 
-                            <td>
+                        <td>
 
-                                <AdminBadge
+                            {{app.company_name}}
 
-                                    :status="app.status"
+                        </td>
+
+
+
+                        <td>
+
+                            {{app.job_title}}
+
+                        </td>
+
+
+
+
+                        <td>
+
+
+                            <AdminBadge
+
+                                :label="app.status"
+
+                                :type="getStatusColor(app.status)"
+
+                            />
+
+
+                        </td>
+
+
+
+
+                        <td>
+
+
+                            <div class="actions">
+
+
+                                <AdminButton
+
+                                    v-if="app.status!=='Selected'"
+
+                                    text="Select"
+
+                                    color="success"
+
+                                    icon="bi bi-check-circle"
+
+                                    @click="approve(app)"
 
                                 />
 
-                            </td>
 
-                            <td>
 
-                                <div
+                                <AdminButton
 
-                                    class="d-flex gap-2 justify-content-center"
+                                    v-if="app.status!=='Rejected'"
 
-                                >
+                                    text="Reject"
 
-                                    <AdminButton
+                                    color="danger"
 
-                                        text="Approve"
+                                    icon="bi bi-x-circle"
 
-                                        color="success"
+                                    @click="reject(app)"
 
-                                        icon="bi bi-check-circle"
+                                />
 
-                                        @click="approve(app)"
 
-                                    />
+                            </div>
 
-                                    <AdminButton
 
-                                        text="Reject"
+                        </td>
 
-                                        color="danger"
 
-                                        icon="bi bi-x-circle"
 
-                                        @click="reject(app)"
 
-                                    />
+                    </tr>
 
-                                </div>
 
-                            </td>
-
-                        </tr>
 
                     </tbody>
 
+
+
                 </table>
+
+
+
 
             </AdminTableCard>
 
+
+
         </div>
+
+
 
     </div>
 
+
+
 </div>
 
+
+
 </template>
+
+
+
+
+<style scoped>
+
+
+.admin-layout{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:#f4f7fb;
+
+}
+
+
+
+.admin-content{
+
+    flex:1;
+
+}
+
+
+
+.page-padding{
+
+    padding:25px;
+
+}
+
+
+
+.toolbar{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.search-area{
+
+    flex:1;
+
+}
+
+
+
+.filter-area{
+
+    width:300px;
+
+}
+
+
+
+
+.table{
+
+    margin-bottom:0;
+
+}
+
+
+
+.table thead th{
+
+    background:#f8fafc;
+
+    padding:15px;
+
+    font-weight:700;
+
+}
+
+
+
+.table tbody td{
+
+    padding:16px;
+
+    vertical-align:middle;
+
+}
+
+
+
+
+.actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:12px;
+
+}
+
+
+
+.actions :deep(button){
+
+    min-width:100px;
+
+    height:38px;
+
+    font-weight:600;
+
+    border-radius:8px;
+
+}
+
+
+
+
+@media(max-width:768px){
+
+
+.toolbar{
+
+    flex-direction:column;
+
+    align-items:stretch;
+
+}
+
+
+
+.filter-area{
+
+    width:100%;
+
+}
+
+
+.actions{
+
+    flex-direction:column;
+
+}
+
+
+}
+
+
+</style>

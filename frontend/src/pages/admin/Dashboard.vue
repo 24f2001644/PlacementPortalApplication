@@ -23,37 +23,25 @@ const loading = ref(true)
 const dashboard = ref({
 
     total_students: 0,
-
     active_students: 0,
-
     blocked_students: 0,
 
     total_companies: 0,
-
     approved_companies: 0,
-
     pending_companies: 0,
-
     blacklisted_companies: 0,
 
     total_drives: 0,
-
     approved_drives: 0,
-
     pending_drives: 0,
-
     rejected_drives: 0,
-
     closed_drives: 0,
 
     total_applications: 0,
 
     applied: 0,
-
     shortlisted: 0,
-
     selected: 0,
-
     rejected: 0,
 
     placement_percentage: 0
@@ -246,11 +234,66 @@ async function loadDashboard() {
 
     try {
 
-        dashboard.value = await getDashboard()
+        const response = await getDashboard()
+
+
+        dashboard.value = {
+
+            total_students: response.students,
+
+            active_students: response.active_students,
+
+            blocked_students: response.blocked_students,
+
+
+            total_companies: response.companies,
+
+            approved_companies: response.approved_companies,
+
+            pending_companies: response.pending_companies,
+
+            blacklisted_companies: response.blacklisted_companies || 0,
+
+
+            total_drives: response.placement_drives,
+
+            approved_drives: response.approved_drives,
+
+            pending_drives: response.pending_drives,
+
+            rejected_drives: response.rejected_drives,
+
+            closed_drives: response.closed_drives,
+
+
+            total_applications: response.applications,
+
+
+            applied: response.applied,
+
+            shortlisted: response.shortlisted,
+
+            selected: response.selected,
+
+            rejected: response.rejected,
+
+
+            placement_percentage:
+
+                response.students > 0
+
+                ? Math.round(
+                    (response.selected / response.students) * 100
+                  )
+
+                : 0
+
+        }
+
 
     }
 
-    catch (error) {
+    catch(error){
 
         console.error(error)
 
@@ -258,14 +301,13 @@ async function loadDashboard() {
 
     }
 
-    finally {
+    finally{
 
-        loading.value = false
+        loading.value=false
 
     }
 
 }
-
 onMounted(() => {
 
     loadDashboard()
@@ -565,13 +607,15 @@ onMounted(() => {
 
                                     title="Approval Rate"
 
+                                    label="Approved Companies"
+
                                     :value="dashboard.approved_companies"
 
                                     :total="dashboard.total_companies"
 
                                     color="success"
 
-                                />
+                                    />
 
                             </div>
 
@@ -644,6 +688,8 @@ onMounted(() => {
                                 <AdminProgressCard
 
                                     title="Student Activity"
+
+                                    label="Active Students"
 
                                     :value="dashboard.active_students"
 
@@ -740,6 +786,8 @@ onMounted(() => {
                                 <AdminProgressCard
 
                                     title="Drive Approval"
+
+                                    label="Approved Drives"
 
                                     :value="dashboard.approved_drives"
 
@@ -1017,7 +1065,7 @@ onMounted(() => {
 
                                     <h1>
 
-                                        {{ dashboard.placement_percentage }}%
+                                        {{ dashboard.placement_percentage || 0 }}%
 
                                     </h1>
 
