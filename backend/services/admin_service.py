@@ -10,7 +10,10 @@ from models.company import Company
 from models.placement_drive import PlacementDrive
 from models.application import Application
 from extensions import cache
+import os
+from flask import send_file
 
+from models.export_job import ExportJob
 # ==========================================================
 # ADMIN DASHBOARD
 # ==========================================================
@@ -1458,6 +1461,167 @@ def get_drive_details(drive_id):
 
     }, 200
     
+# ==========================================================
+# CREATE EXPORT JOB
+# ==========================================================
+
+def create_export_job(student_id):
+    
+    from tasks.export_tasks import export_applications_csv
+
+    job = ExportJob(
+
+        student_id=student_id,
+
+        status="PENDING"
+
+    )
+
+    db.session.add(job)
+
+    db.session.commit()
+
+    export_applications_csv.delay(job.export_id)
+
+    return {
+
+        "message": "Export started",
+
+        "export_id": job.export_id
+
+    }, 202
+    
+# ==========================================================
+# GET EXPORT STATUS
+# ==========================================================
+
+def get_export_status(export_id):
+
+    job = db.session.get(
+
+        ExportJob,
+
+        export_id
+
+    )
+
+    if not job:
+
+        return {
+
+            "message": "Export job not found"
+
+        }, 404
+
+    return {
+
+        "export_id": job.export_id,
+
+        "status": job.status,
+
+        "file_path": job.file_path,
+
+        "error_message": job.error_message,
+
+        "created_at": (
+            job.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            if job.created_at
+            else None
+        ),
+
+        "completed_at": (
+            job.completed_at.strftime("%Y-%m-%d %H:%M:%S")
+            if job.completed_at
+            else None
+        )
+
+    }, 200
+    
+# ==========================================================
+# DOWNLOAD EXPORT
+# ==========================================================
+
+def download_export(export_id):
+
+    job = db.session.get(
+
+        ExportJob,
+
+        export_id
+
+    )
+
+    if not job:
+
+        return {
+
+            "message": "Export job not found"
+
+        }, 404
+
+    if job.status != "COMPLETED":
+
+        return {
+
+            "message": "Export not completed"
+
+        }, 400
+        
+        
+    if not os.path.exists(job.file_path):
+        return {
+            "message": "Export file not found"
+        }, 404
+
+    return send_file(
+
+        job.file_path,
+
+        as_attachment=True
+
+    )
     
     
-    
+# ==========================================================
+# GET ALL EXPORTS
+# ==========================================================
+
+def get_all_exports():
+
+    jobs = ExportJob.query.order_by(
+
+        ExportJob.created_at.desc()
+
+    ).all()
+
+    result = []
+
+    for job in jobs:
+
+        result.append({
+
+            "export_id": job.export_id,
+
+            "student_id": job.student_id,
+
+            "status": job.status,
+
+            "file_path": job.file_path,
+
+            "error_message": job.error_message,
+
+            "created_at": (
+                job.created_at.strftime("%Y-%m-%d %H:%M:%S")
+                if job.created_at
+                else None
+            ),
+
+            "completed_at": (
+                job.completed_at.strftime("%Y-%m-%d %H:%M:%S")
+                if job.completed_at
+                else None
+            )
+
+        })
+
+    return result, 200

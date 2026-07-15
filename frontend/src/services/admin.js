@@ -259,3 +259,46 @@ export const createNotification = async (data) => {
     return response.data;
 
 };
+
+
+export async function exportCSV() {
+
+    const response = await api.post(
+
+        "/admin/exports",
+
+        {
+            student_id: 1
+        }
+
+    )
+
+    return response.data
+
+}
+
+
+export async function getExportStatus(jobId){
+
+    const response = await api.get(
+
+        `/admin/exports/${jobId}`
+
+    )
+
+    return response.data
+
+}
+
+export async function downloadCSV(jobId){
+
+    const response = await api.get(
+        `/admin/exports/${jobId}/download`,
+        {
+            responseType: "blob"
+        }
+    )
+
+    return response.data
+
+}

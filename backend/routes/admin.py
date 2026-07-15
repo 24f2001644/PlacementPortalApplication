@@ -25,7 +25,13 @@ from services.admin_service import (
 
     placement_statistics,
     get_student_details,
-    get_drive_details
+    get_drive_details,
+    create_export_job,
+    get_export_status,
+    get_all_exports,
+    download_export,
+
+    download_export
 
 )
 
@@ -313,105 +319,71 @@ from extensions import db
 
 
 
+# ==========================================================
+# CREATE EXPORT
+# ==========================================================
+
 @admin_bp.route(
-    "/export-applications",
+    "/exports",
     methods=["POST"]
 )
 @jwt_required()
 @admin_required
-def export_applications():
+def create_export():
 
-    from tasks.export_tasks import export_applications_csv
+    body = request.get_json(silent=True) or {}
 
-    job = ExportJob(
-        status="PENDING"
-    )
+    student_id = body.get("student_id")
 
-    db.session.add(job)
-    db.session.commit()
+    data, status = create_export_job(student_id)
 
-    export_applications_csv.delay(job.export_id)
+    return jsonify(data), status
 
-    return jsonify({
-        "message": "Export started",
-        "job_id": job.export_id
-    }), 202
-    
-    
-    
+
+# ==========================================================
+# GET ALL EXPORTS
+# ==========================================================
+
 @admin_bp.route(
-    "/exports/<int:job_id>",
+    "/exports",
     methods=["GET"]
 )
 @jwt_required()
 @admin_required
-def download_export(job_id):
+def exports():
 
-    job = ExportJob.query.get(job_id)
+    data, status = get_all_exports()
 
-    if not job:
-        return {"message":"Export not found"},404
+    return jsonify(data), status
 
-    if job.status!="COMPLETED":
-        return {"message":"Export not ready"},400
-
-    return send_file(
-        job.file_path,
-        as_attachment=True
-    )
-    
-    
-    
-    
-# ==========================================================
-# STUDENT MANAGEMENT
-# ==========================================================
 
 # ==========================================================
-# STUDENT MANAGEMENT
+# GET EXPORT STATUS
 # ==========================================================
 
-# @admin_bp.route(
-#     "/students",
-#     methods=["GET"]
-# )
-# @jwt_required()
-# @admin_required
-# def students():
+@admin_bp.route(
+    "/exports/<int:export_id>",
+    methods=["GET"]
+)
+@jwt_required()
+@admin_required
+def export_status_route(export_id):
 
-#     search = request.args.get("search")
+    data, status = get_export_status(export_id)
 
-#     data, status_code = get_all_students(search)
-
-#     return jsonify(data), status_code
+    return jsonify(data), status
 
 
-# @admin_bp.route(
-#     "/students/<int:user_id>/toggle",
-#     methods=["PUT"]
-# )
-# @jwt_required()
-# @admin_required
-# def toggle_student(user_id):
+# ==========================================================
+# DOWNLOAD EXPORT
+# ==========================================================
 
-#     data, status_code = toggle_student_status(user_id)
+@admin_bp.route(
+    "/exports/<int:export_id>/download",
+    methods=["GET"]
+)
+@jwt_required()
+@admin_required
+def download_export_route(export_id):
 
-#     return jsonify(data), status_code
-
-
-
-# # ==========================================================
-# # STUDENT DETAILS
-# # ==========================================================
-
-# @admin_bp.route(
-#     "/students/<int:user_id>",
-#     methods=["GET"]
-# )
-# @jwt_required()
-# @admin_required
-# def student_details(user_id):
-
-#     data, status = get_student_details(user_id)
-
-#     return jsonify(data), status
+    return download_export(export_id)

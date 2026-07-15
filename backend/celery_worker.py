@@ -22,8 +22,7 @@ def create_celery(app):
         include=[
             "tasks.export_tasks",
             "tasks.notification_tasks",
-            "tasks.scheduled_tasks" ,
-            "tasks.monthly_report_tasks"# <-- ADD THIS
+            "tasks.scheduled_tasks",
         ]
     )
 
@@ -41,11 +40,6 @@ def create_celery(app):
         "task": "tasks.scheduled_tasks.daily_reminder",
         "schedule": crontab(hour=9, minute=0)
     },
-
-    "monthly-report": {
-        "task": "tasks.monthly_report_tasks.monthly_report",
-        "schedule": crontab(day_of_month=1, hour=0, minute=0)
-    }
 }
 
     # ==========================================================

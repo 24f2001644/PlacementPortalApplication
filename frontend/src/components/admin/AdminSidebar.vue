@@ -92,6 +92,12 @@ icon:"bi bi-file-earmark-text"
 name:"Statistics",
 route:"/admin/statistics",
 icon:"bi bi-bar-chart-line"
+},
+
+{
+name:"Export CSV",
+route:"/admin/export",
+icon:"bi bi-file-earmark-arrow-down"
 }
 
 ]

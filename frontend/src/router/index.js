@@ -188,6 +188,7 @@ component:EditProfile
     path:"/admin/export",
     component:AdminExportCSV
 },
+
 {
     path:"/admin/settings",
     component:Settings
