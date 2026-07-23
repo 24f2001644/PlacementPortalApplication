@@ -22,7 +22,25 @@ const router = useRouter()
 
 const loading = ref(false)
 
+const branches = [
 
+    "CSE",
+
+    "IT",
+
+    "AIML",
+
+    "CSDS",
+
+    "ECE",
+
+    "EEE",
+
+    "ME",
+
+    "CE"
+
+]
 
 const drive = ref({
 
@@ -316,17 +334,25 @@ async function submitDrive(){
                             </label>
 
 
-                            <input
+                            <select
+    class="form-control"
+    v-model="drive.eligible_branches"
+    required
+>
 
-                                type="text"
+    <option value="">
+        Select Eligible Branch
+    </option>
 
-                                class="form-control"
+    <option
+        v-for="branch in branches"
+        :key="branch"
+        :value="branch"
+    >
+        {{ branch }}
+    </option>
 
-                                placeholder="CGPA > 8, CSE only"
-
-                                v-model="drive.eligible_branches"
-
-                            >
+</select>
 
 
                         </div>

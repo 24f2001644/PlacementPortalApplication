@@ -86,15 +86,20 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                  <label>Current Year</label>
+  <label>Current Year</label>
 
-                  <input
-                    type="number"
-                    class="form-control"
-                    v-model="form.year"
-                    required
-                  >
-                </div>
+  <select
+    class="form-control"
+    v-model="form.year"
+    required
+  >
+    <option value="" disabled>Select Current Year</option>
+    <option :value="1">1st Year</option>
+    <option :value="2">2nd Year</option>
+    <option :value="3">3rd Year</option>
+    <option :value="4">4th Year</option>
+  </select>
+</div>
 
                 <div class="col-md-4 mb-3">
                   <label>CGPA</label>
@@ -140,14 +145,30 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                  <label>Branch</label>
 
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="form.branch"
-                  >
-                </div>
+  <label>Branch</label>
+
+  <select
+    class="form-select"
+    v-model="form.branch"
+    required
+  >
+
+    <option disabled value="">
+      Select Branch
+    </option>
+
+    <option
+      v-for="branch in branches"
+      :key="branch"
+      :value="branch"
+    >
+      {{ branch }}
+    </option>
+
+  </select>
+
+</div>
 
                 <div class="col-md-6 mb-3">
                   <label>Date of Birth</label>
@@ -246,6 +267,27 @@ const errorMessage = ref("");
 const successMessage = ref("");
 
 let resume = null;
+
+
+const branches = [
+
+  "CSE",
+
+  "IT",
+
+  "AIML",
+
+  "CSDS",
+
+  "ECE",
+
+  "EEE",
+
+  "ME",
+
+  "CE"
+
+];
 
 const form = reactive({
 

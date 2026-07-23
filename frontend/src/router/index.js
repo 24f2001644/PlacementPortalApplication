@@ -43,7 +43,6 @@ import AdminStudentDetails from "../pages/admin/StudentDetails.vue"
 import AdminDrives from "../pages/admin/Drives.vue"
 import AdminDriveDetails from "../pages/admin/DriveDetails.vue"
 import AdminApplications from "../pages/admin/Applications.vue"
-import AdminNotifications from "../pages/admin/Notifications.vue"
 import Reports from "../pages/admin/Reports.vue"
 import AdminExportCSV from "../pages/admin/ExportCSV.vue"
 import Settings from "../pages/admin/Settings.vue"
@@ -175,10 +174,43 @@ component:EditProfile
     path:"/admin/applications",
     component:AdminApplications
 },
+// {
+//     path:"/admin/notifications",
+//     name:"AdminNotifications",
+//     component: AdminNotifications
+// },
+
+// Admin
 {
-    path:"/admin/notifications",
-    name:"AdminNotifications",
-    component: AdminNotifications
+    path: "/admin/notifications",
+    name: "AdminNotifications",
+    component: () => import("../pages/admin/Notifications.vue"),
+    meta: {
+        requiresAuth: true,
+        role: "ADMIN"
+    }
+},
+
+// Student
+{
+    path: "/student/notifications",
+    name: "StudentNotifications",
+    component: () => import("../pages/student/Notifications.vue"),
+    meta: {
+        requiresAuth: true,
+        role: "STUDENT"
+    }
+},
+
+// Company
+{
+    path: "/company/notifications",
+    name: "CompanyNotifications",
+    component: () => import("../pages/company/Notifications.vue"),
+    meta: {
+        requiresAuth: true,
+        role: "COMPANY"
+    }
 },
 {
     path:"/admin/reports",
@@ -208,50 +240,25 @@ routes
 
 });
 
-router.beforeEach(
+router.beforeEach((to) => {
 
-(to,from,next)=>{
+    const token = localStorage.getItem("token");
 
-const token=
+    const user = JSON.parse(
+        localStorage.getItem("user")
+    );
 
-localStorage.getItem("token");
+    const role = user?.role;
 
-const role=
+    if (to.meta.requiresAuth && !token) {
+        return "/login";
+    }
 
-localStorage.getItem("role");
+    if (to.meta.role && role !== to.meta.role) {
+        return "/login";
+    }
 
-if(
-
-to.meta.requiresAuth &&
-
-!token
-
-){
-
-next("/login");
-
-return;
-
-}
-
-if(
-
-to.meta.role &&
-
-role!==to.meta.role
-
-){
-
-next("/login");
-
-return;
-
-}
-
-next();
-
-}
-
-);
+    return true;
+});
 
 export default router;

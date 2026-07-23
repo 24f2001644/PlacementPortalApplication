@@ -12,9 +12,7 @@ import CompanyStatusBadge from "../../components/company/CompanyStatusBadge.vue"
 import CompanyLoading from "../../components/company/CompanyLoading.vue"
 import CompanyEmptyState from "../../components/company/CompanyEmptyState.vue"
 
-import { useRoute } from "vue-router"
 
-const route = useRoute()
 
 import {
 
@@ -40,46 +38,39 @@ const loading = ref(true)
 
 async function loadApplications(){
 
-
-    loading.value=true
-
-
+    loading.value = true
 
     try{
 
-
-        applications.value = await getApplications(route.params.id)
-
-
+        applications.value = await getApplications()
 
     }
-
 
     catch(error){
 
-
         console.error(error)
 
+        if(error.response){
 
+            console.log(error.response.data)
 
-        alert(
+            alert(error.response.data.message)
 
-            "Unable to load applications"
+        }
 
-        )
+        else{
 
+            alert("Unable to load applications")
+
+        }
 
     }
-
 
     finally{
 
-
-        loading.value=false
-
+        loading.value = false
 
     }
-
 
 }
 
@@ -121,7 +112,7 @@ async function changeStatus(
 
 
 
-        loadApplications()
+        await loadApplications()
 
 
 
@@ -315,7 +306,7 @@ onMounted(
 
                                 <strong>
 
-                                    {{ application.student }}
+                                    {{ application.full_name }}
 
                                 </strong>
 
@@ -377,7 +368,7 @@ onMounted(
 
                                 <a
 
-                                    :href="application.resume"
+                                    :href="application.resume_path"
 
                                     target="_blank"
 

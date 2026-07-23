@@ -289,7 +289,7 @@ onMounted(
 
                                 <strong>
 
-                                    {{ student.student }}
+                                    {{ student.student_name }}
 
                                 </strong>
 
@@ -339,7 +339,7 @@ onMounted(
                             <td>
 
 
-                                {{ student.role }}
+                                {{ student.job_title }}
 
 
                             </td>
@@ -351,7 +351,7 @@ onMounted(
                             <td>
 
 
-                                {{ student.package }}
+                                {{ student.salary_package }}
 
 
                             </td>

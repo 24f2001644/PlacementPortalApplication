@@ -65,11 +65,14 @@
 
             class="icon-btn"
 
-            @click="openNotifications"
-
         >
 
-            <i class="bi bi-bell"></i>
+            <router-link
+                to="/student/notifications"
+                class="icon-btn"
+            >
+                <i class="bi bi-bell"></i>
+            </router-link>
 
 
         </button>

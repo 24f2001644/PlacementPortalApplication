@@ -37,7 +37,11 @@ function openNotifications(){
 
         <div class="search">
 
-            <i class="bi bi-search"></i>
+            <router-link to="/admin/notifications">
+
+                <i class="bi bi-bell"></i>
+
+            </router-link>
 
             <input
 

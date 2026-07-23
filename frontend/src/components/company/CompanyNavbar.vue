@@ -44,7 +44,11 @@
 
         >
 
-            <i class="bi bi-bell"></i>
+            <router-link to="/company/notifications">
+
+                <i class="bi bi-bell"></i>
+
+            </router-link>
 
         </button>
 

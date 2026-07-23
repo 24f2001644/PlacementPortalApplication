@@ -41,18 +41,26 @@ export const closeDrive = async(id)=>{
 
 }
 
-export const getApplications = async(driveId)=>{
+// export const getApplications = async(driveId)=>{
+
+//     const response = await api.get(
+
+//         `/company/drives/${driveId}/applications`
+
+//     )
+
+//     return response.data
+
+// }
+
+export const getApplications = async () => {
 
     const response = await api.get(
-
-        `/company/drives/${driveId}/applications`
-
+        "/company/applications"
     )
 
     return response.data
-
 }
-
 
 
 
