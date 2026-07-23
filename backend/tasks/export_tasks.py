@@ -2,6 +2,7 @@ import csv
 import os
 from io import StringIO
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from celery_worker import celery
 
@@ -58,7 +59,7 @@ def export_applications_csv(export_id):
 
         os.makedirs(EXPORT_DIR, exist_ok=True)
 
-        filename = f"applications_{datetime.utcnow().timestamp()}.csv"
+        filename = f"applications_{datetime.now(ZoneInfo('Asia/Kolkata')).timestamp()}.csv"
         file_path = os.path.join(EXPORT_DIR, filename)
 
         with open(file_path, "w", newline="") as file:
@@ -66,7 +67,9 @@ def export_applications_csv(export_id):
 
         job.status = "COMPLETED"
         job.file_path = file_path
-        job.completed_at = datetime.utcnow()
+        job.completed_at = datetime.now(
+            ZoneInfo("Asia/Kolkata")
+        ).replace(tzinfo=None)
 
         db.session.commit()
 

@@ -8,7 +8,12 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-
+from services.notification_service import (
+    get_notifications,
+    mark_notification_read,
+    delete_notification,
+    unread_count
+)
 from services.student_service import (
 
 

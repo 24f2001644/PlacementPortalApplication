@@ -1,3 +1,5 @@
+from email.mime import application
+
 from sqlalchemy import func
 
 from extensions import db
@@ -450,45 +452,34 @@ def delete_drive(user_id, drive_id):
 # VIEW APPLICATIONS FOR A DRIVE
 # ==========================================================
 
-def get_drive_applications(user_id, drive_id):
+def get_drive_applications(user_id):
 
-    drive = PlacementDrive.query.filter_by(
-
-        drive_id=drive_id,
-
-        company_id=user_id
-
-    ).first()
-
-    if not drive:
-
-        return {
-
-            "message": "Drive not found"
-
-        }, 404
-
-
-    applications = Application.query.filter_by(
-
-        drive_id=drive_id
-
-    ).order_by(
-
-        Application.application_date.desc()
-
-    ).all()
-
+    applications = (
+        Application.query
+        .join(PlacementDrive)
+        .filter(
+            PlacementDrive.company_id == user_id
+        )
+        .order_by(
+            Application.application_date.desc()
+        )
+        .all()
+    )
 
     data = []
 
     for application in applications:
 
         student = application.student
+        drive = application.drive
 
         data.append({
 
             "application_id": application.application_id,
+
+            "drive_id": drive.drive_id,
+
+            "job_title": drive.job_title,
 
             "student_id": student.user_id,
 
@@ -525,71 +516,124 @@ def get_drive_applications(user_id, drive_id):
 # UPDATE APPLICATION STATUS
 # ==========================================================
 
-def update_application_status(
+# def update_application_status(
 
-    user_id,
+#     user_id,
 
-    application_id,
+#     application_id,
 
-    status
+#     status
 
-):
+# ):
+
+#     application = Application.query.filter_by(
+
+#         application_id=application_id
+
+#     ).first()
+
+
+#     if not application:
+
+#         return {
+
+#             "message": "Application not found"
+
+#         }, 404
+
+#     print("Logged in company:", user_id)
+#     print("Drive company:", application.drive.company_id)
+
+#     if application.drive.company_id != user_id:
+
+#         return {
+
+#             "message": "Unauthorized access"
+
+#         }, 403
+
+
+#     allowed_status = [
+
+#         "Applied",
+
+#         "Shortlisted",
+
+#         "Rejected",
+
+#         "Selected"
+
+#     ]
+
+
+#     if status not in allowed_status:
+
+#         return {
+
+#             "message": "Invalid status"
+
+#         }, 400
+
+
+#     application.status = status
+
+#     db.session.commit()
+#     print("Status updated successfully")
+
+#     return {
+
+#         "message": "Application status updated successfully"
+
+#     }, 200
+
+def update_application_status(user_id, application_id, status):
+
+    print("STEP 1")
 
     application = Application.query.filter_by(
-
         application_id=application_id
-
     ).first()
 
+    print("STEP 2")
 
     if not application:
+        print("Application not found")
+        return {"message": "Application not found"}, 404
 
-        return {
-
-            "message": "Application not found"
-
-        }, 404
-
+    print("Logged in company:", user_id, type(user_id))
+    print("Drive company:", application.drive.company_id, type(application.drive.company_id))
 
     if application.drive.company_id != user_id:
+        print("Unauthorized")
+        return {"message": "Unauthorized access"}, 403
 
-        return {
-
-            "message": "Unauthorized access"
-
-        }, 403
-
+    print("STEP 3")
 
     allowed_status = [
-
         "Applied",
-
         "Shortlisted",
-
         "Rejected",
-
         "Selected"
-
     ]
 
+    print("Incoming status:", status)
 
     if status not in allowed_status:
+        print("Invalid status")
+        return {"message": "Invalid status"}, 400
 
-        return {
-
-            "message": "Invalid status"
-
-        }, 400
-
+    print("STEP 4")
 
     application.status = status
 
+    print("STEP 5")
+
     db.session.commit()
 
+    print("STEP 6")
+
     return {
-
         "message": "Application status updated successfully"
-
     }, 200
 
 

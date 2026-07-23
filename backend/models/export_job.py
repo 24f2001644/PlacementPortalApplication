@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from extensions import db
 
 
@@ -33,9 +34,9 @@ class ExportJob(db.Model):
     )
 
     created_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow
-    )
+    db.DateTime,
+    default=lambda: datetime.now(ZoneInfo("Asia/Kolkata")).replace(tzinfo=None)
+)
 
     completed_at = db.Column(
         db.DateTime

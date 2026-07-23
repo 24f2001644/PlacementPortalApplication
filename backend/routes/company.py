@@ -247,31 +247,18 @@ def remove_drive(drive_id):
 # ==========================================================
 
 @company_bp.route(
-
-    "/drives/<int:drive_id>/applications",
-
+    "/applications",
     methods=["GET"]
-
 )
 @jwt_required()
 @company_required
-def drive_applications(drive_id):
+def company_applications():
 
+    user_id = get_jwt_identity()
 
-    user_id=get_jwt_identity()
+    data, status = get_drive_applications(user_id)
 
-
-
-    data,status=get_drive_applications(
-
-        user_id,
-
-        drive_id
-
-    )
-
-
-    return jsonify(data),status
+    return jsonify(data), status
 
 
 
@@ -295,7 +282,7 @@ def drive_applications(drive_id):
 def change_application_status(application_id):
 
 
-    user_id=get_jwt_identity()
+    user_id=int(get_jwt_identity())
 
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from zoneinfo import ZoneInfo
 from extensions import db
 
 
@@ -44,7 +44,9 @@ class Notification(db.Model):
 
     created_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(
+            ZoneInfo("Asia/Kolkata")
+        ).replace(tzinfo=None),
         nullable=False
     )
 

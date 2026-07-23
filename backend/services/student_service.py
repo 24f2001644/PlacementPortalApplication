@@ -313,7 +313,6 @@ def apply_for_drive(user_id, drive_id):
 
         }, 400
 
-
     # ----------------------------
     # Eligibility Validation
     # ----------------------------
@@ -358,7 +357,7 @@ def apply_for_drive(user_id, drive_id):
 
         drive.eligible_year is not None
 
-        and student.graduation_year != drive.eligible_year
+        and student.year != drive.eligible_year
 
     ):
 
