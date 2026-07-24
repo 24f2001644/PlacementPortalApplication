@@ -5,13 +5,18 @@ from flask import Response
 from io import StringIO
 
 import csv
-
+from datetime import datetime
 from extensions import db
 
 from models.student import Student
 from models.application import Application
 from models.placement_drive import PlacementDrive
+from models.student import Student
 
+import os
+
+from flask import send_file, jsonify
+from models.student import Student
 # ==========================================================
 # STUDENT PROFILE
 # ==========================================================
@@ -85,10 +90,27 @@ def update_student_profile(user_id, data):
         student.skills
     )
 
-    student.dob = data.get(
-        "dob",
-        student.dob
-    )
+    
+
+    dob = data.get("dob")
+
+    if dob:
+        try:
+            # if frontend sends yyyy-mm-dd
+            student.dob = datetime.strptime(
+                dob,
+                "%Y-%m-%d"
+            ).date()
+        except ValueError:
+            try:
+                # if frontend sends:
+                # Sun, 03 Apr 2005 00:00:00 GMT
+                student.dob = datetime.strptime(
+                    dob,
+                    "%a, %d %b %Y %H:%M:%S GMT"
+                ).date()
+            except ValueError:
+                pass
 
     # Resume upload can be added later
 
@@ -176,7 +198,7 @@ def get_student_profile(user_id):
 
         "skills": student.skills,
 
-        "resume_path": student.resume_path,
+        "resume_path": "/api/student/resume/download",
 
         "profile_completed": student.profile_completed,
 
@@ -778,88 +800,39 @@ def get_drive_details(drive_id):
 # EXPORT APPLICATIONS CSV
 # ==========================================================
 
-def export_student_csv(user_id):
+from flask_jwt_extended import get_jwt_identity
+from models.student import Student
+from models.export_job import ExportJob
+from extensions import db
 
-    applications = (
-        Application.query
-        .filter_by(
-            student_id=user_id
-        )
-        .order_by(
-            Application.application_date.desc()
-        )
-        .all()
+def export_my_applications():
+
+    from tasks.student_export_tasks import export_my_applications_csv
+
+    current_user = get_jwt_identity()
+
+    student = Student.query.filter_by(
+        user_id=current_user
+    ).first()
+
+    if not student:
+        return {
+            "message": "Student not found"
+        }, 404
+
+    export_job = ExportJob(
+        student_id=student.user_id,
+        status="PENDING"
     )
 
-    output = StringIO()
+    db.session.add(export_job)
+    db.session.commit()
 
-    writer = csv.writer(output)
-
-    writer.writerow([
-
-        "Application ID",
-
-        "Company",
-
-        "Job Title",
-
-        "Salary Package",
-
-        "Application Status",
-
-        "Application Date"
-
-    ])
-
-
-    for application in applications:
-
-        drive = application.drive
-
-        company = drive.company
-
-        writer.writerow([
-
-            application.application_id,
-
-            company.company_name,
-
-            drive.job_title,
-
-            drive.salary_package,
-
-            application.status,
-
-            application.application_date.strftime(
-
-                "%Y-%m-%d %H:%M"
-
-            )
-
-            if application.application_date
-
-            else ""
-
-        ])
-
-
-    csv_data = output.getvalue()
-
-    output.close()
-
-
-    return Response(
-
-        csv_data,
-
-        mimetype="text/csv",
-
-        headers={
-
-            "Content-Disposition":
-
-                "attachment; filename=my_applications.csv"
-
-        }
-
+    export_my_applications_csv.delay(
+        export_job.export_id,
+        student.user_id
     )
+
+    return {
+        "message": "Export started successfully. You will receive a notification when it is ready."
+    }, 202

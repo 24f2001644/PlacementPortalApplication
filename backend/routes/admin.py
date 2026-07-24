@@ -2,13 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask import send_file
 from models.export_job import ExportJob
 from flask_jwt_extended import jwt_required
-
-from services.notification_service import (
-    get_notifications,
-    mark_notification_read,
-    delete_notification,
-    unread_count
-)
+from utils.decorators import admin_required
 
 from services.admin_service import (
 
@@ -38,7 +32,8 @@ from services.admin_service import (
     get_all_exports,
     download_export,
 
-    download_export
+    download_export,
+    generate_monthly_report_service
 
 )
 
@@ -396,3 +391,41 @@ def download_export_route(export_id):
     return download_export(export_id)
 
 
+
+@admin_bp.route(
+    "/generate-placement-report",
+    methods=["POST"]
+)
+@jwt_required()
+@admin_required
+def generate_placement_report_route():
+
+    data, status = generate_monthly_report_service()
+
+    return jsonify(data), status
+
+
+@admin_bp.route(
+    "/download-report/<int:export_id>",
+    methods=["GET"]
+)
+@jwt_required()
+@admin_required
+def download_report(export_id):
+
+    job = ExportJob.query.get(export_id)
+
+    if not job:
+        return jsonify({
+            "message": "Export not found"
+        }), 404
+
+    if job.status != "COMPLETED":
+        return jsonify({
+            "message": "Report not ready"
+        }), 400
+
+    return send_file(
+        job.file_path,
+        as_attachment=True
+    )

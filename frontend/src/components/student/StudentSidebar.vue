@@ -104,7 +104,6 @@ const auth = useAuthStore()
 
 const menu = [
 
-
 {
 
     name:"Dashboard",
@@ -114,8 +113,6 @@ const menu = [
     icon:"bi bi-speedometer2"
 
 },
-
-
 
 {
 
@@ -127,8 +124,6 @@ const menu = [
 
 },
 
-
-
 {
 
     name:"Placement Drives",
@@ -138,8 +133,6 @@ const menu = [
     icon:"bi bi-briefcase-fill"
 
 },
-
-
 
 {
 
@@ -151,8 +144,6 @@ const menu = [
 
 },
 
-
-
 {
 
     name:"History",
@@ -161,8 +152,17 @@ const menu = [
 
     icon:"bi bi-clock-history"
 
-}
+},
 
+{
+
+    name:"Export Applications",
+
+    route:"/student/export",
+
+    icon:"bi bi-download"
+
+}
 
 ]
 

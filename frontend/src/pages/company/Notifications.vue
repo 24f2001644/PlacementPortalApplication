@@ -25,19 +25,19 @@ async function loadNotifications() {
 
         const response = await getNotifications()
 
-        console.table(response.data)
+        console.log("FULL RESPONSE", response)
 
-        notifications.value = Array.isArray(response.data)
-            ? response.data
-            : []
+        notifications.value = response
+
+        console.log("notifications", notifications.value)
+
+        console.log("length", notifications.value.length)
 
     }
 
-    catch (error) {
+    catch (err) {
 
-        console.error(error)
-
-        notifications.value = []
+        console.error(err)
 
     }
 

@@ -124,11 +124,39 @@ export const withdrawApplication = async(id)=>{
 
 }
 
+
+/*
+====================================
+ EXPORT APPLICATIONS
+====================================
+*/
+
 export const exportApplications = async()=>{
 
-    return await api.get(
+    const response = await api.post(
 
-        "/student/export",
+        "/student/export-applications"
+
+    )
+
+    return response.data
+
+}
+
+
+
+
+/*
+====================================
+ DOWNLOAD RESUME
+====================================
+*/
+
+export const downloadResume = async()=>{
+
+    const response = await api.get(
+
+        "/student/resume/download",
 
         {
 
@@ -137,5 +165,25 @@ export const exportApplications = async()=>{
         }
 
     )
+
+    const url = window.URL.createObjectURL(
+
+        new Blob([response.data])
+
+    )
+
+    const link = document.createElement("a")
+
+    link.href = url
+
+    link.download = "Resume.pdf"
+
+    document.body.appendChild(link)
+
+    link.click()
+
+    document.body.removeChild(link)
+
+    window.URL.revokeObjectURL(url)
 
 }

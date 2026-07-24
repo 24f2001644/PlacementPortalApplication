@@ -1630,3 +1630,30 @@ def get_all_exports():
     return result, 200
 
 
+from flask_jwt_extended import get_jwt_identity
+
+
+
+def generate_monthly_report_service():
+    from tasks.admin_report_tasks import generate_monthly_report
+
+    current_user = get_jwt_identity()
+
+    export_job = ExportJob(
+        student_id=current_user,
+        status="PENDING"
+    )
+
+    db.session.add(export_job)
+    db.session.commit()
+
+    generate_monthly_report.delay(
+        export_job.export_id,
+        current_user
+    )
+
+    return {
+        "message": "Monthly report generation started."
+    }, 202
+
+

@@ -21,7 +21,7 @@ import StudentApplications from "../pages/student/Applications.vue"
 import History from "../pages/student/History.vue"
 import StudentDriveDetails from "../pages/student/DriveDetails.vue"
 import EditProfile from "../pages/student/EditProfile.vue"
-import StudentExportCSV from "../pages/student/ExportCSV.vue"
+import ExportApplications from "../pages/student/ExportApplications.vue"
 
 // Company
 
@@ -108,7 +108,11 @@ component:CompanyRegister
 },
 {
     path: "/student/export",
-    component: StudentExportCSV
+    component: ExportApplications,
+    meta: {
+        requiresAuth: true,
+        role: "STUDENT"
+    }
 },
 {
 path:"/student/profile/edit",

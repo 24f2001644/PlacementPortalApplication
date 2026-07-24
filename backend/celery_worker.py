@@ -21,8 +21,10 @@ def create_celery(app):
         app.import_name,
         include=[
             "tasks.export_tasks",
+            "tasks.student_export_tasks",
             "tasks.notification_tasks",
             "tasks.scheduled_tasks",
+            "tasks.admin_report_tasks",
         ]
     )
 
@@ -34,13 +36,38 @@ def create_celery(app):
     # ==========================================================
     
     
+    # celery.conf.beat_schedule = {
+
+    #     # Every day at 9 AM
+    #     "daily-reminder": {
+    #         "task": "tasks.scheduled_tasks.daily_reminder",
+    #         "schedule": crontab(hour=9, minute=0),
+    #     },
+
+    #     # First day of every month at 12:00 AM
+    #     "monthly-placement-report": {
+    #         "task": "tasks.scheduled_tasks.monthly_report_scheduler",
+    #         "schedule": crontab(
+    #             day_of_month=1,
+    #             hour=0,
+    #             minute=0
+    #         ),
+    #     },
+    # }
+    
     celery.conf.beat_schedule = {
 
-    "daily-reminder": {
-        "task": "tasks.scheduled_tasks.daily_reminder",
-        "schedule": crontab(hour=9, minute=0)
-    },
-}
+        "daily-reminder": {
+            "task": "tasks.scheduled_tasks.daily_reminder",
+            "schedule": crontab(),          # every minute
+        },
+
+        "monthly-placement-report": {
+            "task": "tasks.scheduled_tasks.monthly_report_scheduler",
+            "schedule": crontab(),          # every minute
+        },
+    }
+
 
     # ==========================================================
     # Flask Application Context

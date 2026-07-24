@@ -8,7 +8,13 @@ import StudentPageHeader from "../../components/student/StudentPageHeader.vue"
 import StudentSectionCard from "../../components/student/StudentSectionCard.vue"
 import StudentLoading from "../../components/student/StudentLoading.vue"
 
-import { getProfile } from "../../services/student"
+import {
+
+    getProfile,
+
+    downloadResume
+
+} from "../../services/student"
 
 
 
@@ -379,13 +385,11 @@ onMounted(loadProfile)
 
                         >
 
-                            <a
+                            <button
 
                                 v-if="student.resume_path"
 
-                                :href="student.resume_path"
-
-                                target="_blank"
+                                @click="downloadResume"
 
                                 class="btn btn-primary w-100"
 
@@ -395,7 +399,7 @@ onMounted(loadProfile)
 
                                 Download Resume
 
-                            </a>
+                            </button>
 
 
 

@@ -1,19 +1,14 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify,send_file
 from extensions import db
-
+import os
 from models.notification import Notification
-
+from models.student import Student
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity
 )
 
-from services.notification_service import (
-    get_notifications,
-    mark_notification_read,
-    delete_notification,
-    unread_count
-)
+
 from services.student_service import (
 
 
@@ -32,7 +27,7 @@ from services.student_service import (
 
     student_dashboard,
 
-    export_student_csv
+    export_my_applications,
     
 
 )
@@ -310,94 +305,20 @@ def drive_details(drive_id):
 # EXPORT APPLICATIONS CSV
 # ==========================================================
 
-@student_bp.route(
+# ==========================================================
+# EXPORT MY APPLICATIONS (ASYNC)
+# ==========================================================
 
-    "/export",
-
-    methods=["GET"]
-
-)
+@student_bp.route("/export-applications", methods=["POST"])
 @jwt_required()
 @student_required
-def export_applications_csv():
+def export_applications_route():
 
+    data, status = export_my_applications()
 
-    user_id = get_jwt_identity()
-
-
-    return export_student_csv(
-
-        user_id
-
-    )
+    return jsonify(data), status
     
     
-    
-@student_bp.route("/notifications", methods=["GET"])
-@jwt_required()
-def get_notifications():
-
-    user_id = get_jwt_identity()
-
-    notifications = Notification.query.filter_by(
-        user_id=user_id
-    ).order_by(
-        Notification.created_at.desc()
-    ).all()
-
-    return jsonify([
-        {
-            "id": n.notification_id,
-            "title": n.title,
-            "message": n.message,
-            "type": n.notification_type,
-            "read": n.is_read,
-            "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        }
-        for n in notifications
-    ])
-    
-    
-@student_bp.route(
-    "/notifications/<int:id>/read",
-    methods=["PUT"]
-)
-@jwt_required()
-def mark_notification(id):
-
-    user_id = get_jwt_identity()
-
-    notification = Notification.query.filter_by(
-        notification_id=id,
-        user_id=user_id
-    ).first()
-
-    if not notification:
-        return {"message": "Notification not found"},404
-
-    notification.is_read=True
-
-    db.session.commit()
-
-    return {"message":"Notification updated"}
-
-
-
-@student_bp.route(
-    "/notifications/count",
-    methods=["GET"]
-)
-@jwt_required()
-def notification_count():
-
-    user=get_jwt_identity()
-
-    count=Notification.query.filter_by(
-        user_id=user,
-        is_read=False
-    ).count()
-
-    return {"count":count}
 
 
 
@@ -418,3 +339,59 @@ def update_profile():
     )
 
     return jsonify(response), status
+
+
+
+
+
+@student_bp.route(
+
+    "/resume/download",
+
+    methods=["GET"]
+
+)
+@jwt_required()
+@student_required
+def download_resume():
+
+    import os
+    from flask import send_file, jsonify
+
+    user_id = get_jwt_identity()
+
+    student = Student.query.filter_by(
+
+        user_id=user_id
+
+    ).first()
+
+    if not student or not student.resume_path:
+
+        return jsonify({
+
+            "message":"Resume not found"
+
+        }),404
+
+    file_path = os.path.abspath(
+
+        student.resume_path
+
+    )
+
+    if not os.path.exists(file_path):
+
+        return jsonify({
+
+            "message":"File not found"
+
+        }),404
+
+    return send_file(
+
+        file_path,
+
+        as_attachment=True
+
+    )
