@@ -34,10 +34,11 @@ def create_app():
             r"/api/*": {
                 "origins": [
                     "http://localhost:5173",
-                    "https://placement-portal-frontend.vercel.app"
+                    "https://placement-portal-application-psi.vercel.app"
                 ]
             }
-        }
+        },
+        supports_credentials=True
     )
 
     # =====================================
