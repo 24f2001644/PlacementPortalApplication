@@ -13,10 +13,7 @@ from models.application import Application
 from models.placement_drive import PlacementDrive
 from models.student import Student
 
-import os
 
-from flask import send_file, jsonify
-from models.student import Student
 # ==========================================================
 # STUDENT PROFILE
 # ==========================================================

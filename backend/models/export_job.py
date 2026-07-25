@@ -36,7 +36,7 @@ class ExportJob(db.Model):
     created_at = db.Column(
     db.DateTime,
     default=lambda: datetime.now(ZoneInfo("Asia/Kolkata")).replace(tzinfo=None)
-)
+    )
 
     completed_at = db.Column(
         db.DateTime
