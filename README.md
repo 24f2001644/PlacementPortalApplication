@@ -235,3 +235,198 @@ Talbiya Parveen
 B.Tech Computer Science Engineering
 
 IIT Madras BS Degree (Data Science)
+
+
+
+
+Backend Setup
+1. Navigate to Backend
+cd backend
+2. Create Virtual Environment
+Windows
+python -m venv venv
+
+Activate:
+
+venv\Scripts\activate
+Linux/Mac
+python3 -m venv venv
+
+Activate:
+
+source venv/bin/activate
+3. Install Dependencies
+pip install -r requirements.txt
+4. Configure Environment Variables
+
+Create a .env file inside the backend folder:
+
+FLASK_APP=app:create_app
+
+JWT_SECRET_KEY=your_secret_key
+
+DATABASE_URL=sqlite:///placement.db
+
+REDIS_URL=redis://localhost:6379/0
+5. Initialize Database
+
+Run:
+
+flask db upgrade
+
+The database will be created automatically.
+
+6. Start Flask Backend
+
+Run:
+
+flask run
+
+Backend will start at:
+
+http://127.0.0.1:5000
+Redis Setup
+
+Start Redis server:
+
+Windows
+redis-server
+Linux
+sudo systemctl start redis
+
+Check Redis:
+
+redis-cli ping
+
+Expected output:
+
+PONG
+Celery Setup
+
+Celery requires a worker and beat scheduler.
+
+Open two separate terminals.
+
+Start Celery Worker
+
+Inside backend folder:
+
+celery -A celery_worker.celery worker --loglevel=info
+
+For Windows:
+
+celery -A celery_worker.celery worker --pool=solo --loglevel=info
+Start Celery Beat
+
+Open another terminal:
+
+celery -A celery_worker.celery beat --loglevel=info
+Frontend Setup
+
+Open a new terminal.
+
+Navigate to frontend:
+
+cd frontend
+Install Packages
+npm install
+Start Vue Development Server
+npm run dev
+
+Frontend will start at:
+
+http://localhost:5173
+Running Application
+
+You need to run these services simultaneously:
+
+Terminal 1
+
+Redis
+
+redis-server
+Terminal 2
+
+Flask Backend
+
+cd backend
+venv\Scripts\activate
+flask run
+Terminal 3
+
+Celery Worker
+
+cd backend
+celery -A celery_worker.celery worker --pool=solo --loglevel=info
+Terminal 4
+
+Celery Beat
+
+cd backend
+celery -A celery_worker.celery beat --loglevel=info
+Terminal 5
+
+Vue Frontend
+
+cd frontend
+npm run dev
+Access Application
+
+Frontend:
+
+http://localhost:5173
+
+Backend API:
+
+http://127.0.0.1:5000
+Default Roles
+
+The application supports:
+
+Admin
+Company
+Student
+
+Authentication is handled using JWT tokens.
+
+Troubleshooting
+Celery not connecting to Redis
+
+Check Redis:
+
+redis-cli ping
+
+If output is not:
+
+PONG
+
+restart Redis.
+
+Flask App Not Found
+
+Set:
+
+Windows:
+
+set FLASK_APP=app:create_app
+
+Linux/Mac:
+
+export FLASK_APP=app:create_app
+Port Already In Use
+
+Backend:
+
+flask run --port 5001
+
+Frontend:
+
+npm run dev -- --port 5174
+Author
+
+Talbiya Parveen
+B.Tech Computer Science Engineering
+PSIT Kanpur
+
+
+You can directly save this as `README.md` in your repository root.
