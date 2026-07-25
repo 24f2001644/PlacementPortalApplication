@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Placement Portal Application
 
 A web-based Placement Portal Application designed to simplify and automate campus placement activities. The system provides separate dashboards and functionalities for **Students, Companies, and Administrators** to manage placement drives, applications, approvals, and placement statistics.
@@ -430,3 +431,6 @@ PSIT Kanpur
 
 
 You can directly save this as `README.md` in your repository root.
+=======
+# CommunityHelp
+>>>>>>> e550c565266b78f388891f8faecd7a8e861c9ae0
