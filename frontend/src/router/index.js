@@ -6,7 +6,7 @@ createWebHistory
 
 } from "vue-router";
 
-import Login from "../pages/auth/Login.vue";
+import Login from "../pages/auth/login.vue";
 
 import StudentRegister from "../pages/auth/StudentRegister.vue";
 
