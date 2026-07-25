@@ -984,7 +984,7 @@ def update_application_status(
 # ==========================================================
 @cache.cached(timeout=300)
 def placement_statistics():
-
+    print("Running placement_statistics()")
     # ------------------------------------------------------
     # OVERALL COUNTS
     # ------------------------------------------------------

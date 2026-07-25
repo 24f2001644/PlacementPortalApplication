@@ -70,6 +70,7 @@ def create_app():
         return jsonify({"message": "Token expired"}), 401
 
     cache.init_app(app)
+    print(cache.config)
 
     # =====================================
     # Register Blueprints
@@ -105,10 +106,15 @@ def create_app():
     @app.route("/health")
     def health():
 
+        try:
+            cache.cache._write_client.ping()
+            redis_status = "connected"
+        except Exception:
+            redis_status = "not connected"
+
         return {
-            "status":"running",
-            "redis":"connected",
-            "celery":"active"
+            "status": "running",
+            "redis": redis_status
         }
 
     # =====================================
