@@ -40,9 +40,6 @@ from services.admin_service import (
 from utils.decorators import admin_required
 
 
-# ==========================================================
-# ADMIN BLUEPRINT
-# ==========================================================
 
 admin_bp = Blueprint(
 
@@ -55,9 +52,6 @@ admin_bp = Blueprint(
 )
 
 
-# ==========================================================
-# ADMIN DASHBOARD
-# ==========================================================
 
 @admin_bp.route(
     "/dashboard",
@@ -72,9 +66,6 @@ def dashboard():
     return jsonify(data), status_code
 
 
-# ==========================================================
-# COMPANY MANAGEMENT
-# ==========================================================
 
 @admin_bp.route(
     "/companies",
@@ -130,9 +121,6 @@ def blacklist_company_route(user_id):
     return jsonify(data), status_code
 
 
-# ==========================================================
-# STUDENT MANAGEMENT
-# ==========================================================
 
 @admin_bp.route(
     "/students",
@@ -175,9 +163,6 @@ def student_details(user_id):
     data, status = get_student_details(user_id)
 
     return jsonify(data), status
-# ==========================================================
-# PLACEMENT DRIVE MANAGEMENT
-# ==========================================================
 
 @admin_bp.route(
     "/drives",
@@ -243,9 +228,6 @@ def drive_details(drive_id):
     data,status = get_drive_details(drive_id)
 
     return jsonify(data),status
-# ==========================================================
-# APPLICATION MANAGEMENT
-# ==========================================================
 
 @admin_bp.route(
     "/applications",
@@ -301,9 +283,6 @@ def update_application(application_id):
     return jsonify(data), status_code
 
 
-# ==========================================================
-# ANALYTICS
-# ==========================================================
 
 @admin_bp.route(
     "/statistics",
@@ -320,10 +299,6 @@ def statistics():
 from extensions import db
 
 
-
-# ==========================================================
-# CREATE EXPORT
-# ==========================================================
 
 @admin_bp.route(
     "/exports",
@@ -342,9 +317,6 @@ def create_export():
     return jsonify(data), status
 
 
-# ==========================================================
-# GET ALL EXPORTS
-# ==========================================================
 
 @admin_bp.route(
     "/exports",
@@ -359,9 +331,6 @@ def exports():
     return jsonify(data), status
 
 
-# ==========================================================
-# GET EXPORT STATUS
-# ==========================================================
 
 @admin_bp.route(
     "/exports/<int:export_id>",
@@ -376,9 +345,6 @@ def export_status_route(export_id):
     return jsonify(data), status
 
 
-# ==========================================================
-# DOWNLOAD EXPORT
-# ==========================================================
 
 @admin_bp.route(
     "/exports/<int:export_id>/download",

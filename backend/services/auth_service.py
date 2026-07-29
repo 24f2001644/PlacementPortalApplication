@@ -14,9 +14,6 @@ from models.student import Student
 from models.company import Company
 
 
-# ============================================
-# HELPERS
-# ============================================
 
 def _save_resume(resume_file):
 
@@ -54,9 +51,6 @@ def _user_response(user):
     }
 
 
-# ============================================
-# LOGIN
-# ============================================
 
 def login_user(data):
 
@@ -121,9 +115,6 @@ def login_user(data):
     }, 200
 
 
-# ============================================
-# GET LOGGED USER
-# ============================================
 
 def get_profile():
 
@@ -203,9 +194,6 @@ def get_profile():
 
 
 
-# ============================================
-# STUDENT REGISTRATION
-# ============================================
 
 def register_student(data, resume_file):
 
@@ -350,9 +338,6 @@ def register_student(data, resume_file):
     
     
     
-# ============================================
-# COMPANY REGISTRATION
-# ============================================
 
 def register_company(data):
 
@@ -452,9 +437,6 @@ def register_company(data):
     }, 201
 
 
-# ============================================
-# UPDATE STUDENT PROFILE
-# ============================================
 
 def update_student_profile(data):
 
@@ -535,9 +517,6 @@ def update_student_profile(data):
     }, 200
 
 
-# ============================================
-# UPLOAD / UPDATE RESUME
-# ============================================
 
 def upload_resume(resume_file):
 
@@ -568,9 +547,6 @@ def upload_resume(resume_file):
     
     
     
-# ============================================
-# UPDATE COMPANY PROFILE
-# ============================================
 
 def update_company_profile(data):
 

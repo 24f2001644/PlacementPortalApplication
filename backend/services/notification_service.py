@@ -6,9 +6,6 @@ from extensions import db
 from flask_jwt_extended import get_jwt_identity
 
 
-# ==========================================================
-# GET ALL NOTIFICATIONS
-# ==========================================================
 
 def get_notifications():
 
@@ -49,9 +46,6 @@ def get_notifications():
     return data, 200
 
 
-# ==========================================================
-# MARK AS READ
-# ==========================================================
 
 def mark_notification_read(notification_id):
 
@@ -84,9 +78,6 @@ def mark_notification_read(notification_id):
     }, 200
 
 
-# ==========================================================
-# DELETE NOTIFICATION
-# ==========================================================
 
 def delete_notification(notification_id):
 
@@ -119,9 +110,6 @@ def delete_notification(notification_id):
     }, 200
 
 
-# ==========================================================
-# UNREAD COUNT
-# ==========================================================
 
 def unread_count():
 

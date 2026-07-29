@@ -14,12 +14,6 @@ from models.placement_drive import PlacementDrive
 from models.student import Student
 
 
-# ==========================================================
-# STUDENT PROFILE
-# ==========================================================
-# ==========================================================
-# UPDATE STUDENT PROFILE
-# ==========================================================
 
 def update_student_profile(user_id, data):
 
@@ -109,7 +103,6 @@ def update_student_profile(user_id, data):
             except ValueError:
                 pass
 
-    # Resume upload can be added later
 
     profile_fields = [
 
@@ -204,9 +197,6 @@ def get_student_profile(user_id):
     }, 200
 
 
-# ==========================================================
-# GET AVAILABLE PLACEMENT DRIVES
-# ==========================================================
 
 def get_available_drives(search=None):
 
@@ -288,9 +278,6 @@ def get_available_drives(search=None):
 
 
 
-# ==========================================================
-# APPLY FOR PLACEMENT DRIVE
-# ==========================================================
 
 def apply_for_drive(user_id, drive_id):
 
@@ -332,9 +319,6 @@ def apply_for_drive(user_id, drive_id):
 
         }, 400
 
-    # ----------------------------
-    # Eligibility Validation
-    # ----------------------------
 
     if drive.eligible_branches:
 
@@ -427,9 +411,6 @@ def apply_for_drive(user_id, drive_id):
     }, 201
 
 
-# ==========================================================
-# MY APPLICATIONS
-# ==========================================================
 
 def get_my_applications(user_id):
 
@@ -474,9 +455,6 @@ def get_my_applications(user_id):
     return data, 200
 
 
-# ==========================================================
-# WITHDRAW APPLICATION
-# ==========================================================
 
 def withdraw_application(user_id, application_id):
 
@@ -518,10 +496,6 @@ def withdraw_application(user_id, application_id):
     
     
     
-    
-# ==========================================================
-# STUDENT DASHBOARD
-# ==========================================================
 
 def student_dashboard(user_id):
 
@@ -540,9 +514,6 @@ def student_dashboard(user_id):
         }, 404
 
 
-    # ======================================================
-    # TOTAL APPROVED DRIVES
-    # ======================================================
 
     total_drives = PlacementDrive.query.filter_by(
 
@@ -551,9 +522,6 @@ def student_dashboard(user_id):
     ).count()
 
 
-    # ======================================================
-    # STUDENT APPLICATIONS
-    # ======================================================
 
     applications = Application.query.filter_by(
 
@@ -596,9 +564,6 @@ def student_dashboard(user_id):
     ).count()
 
 
-    # ======================================================
-    # PROFILE COMPLETION
-    # ======================================================
 
     profile_fields = [
 
@@ -654,9 +619,6 @@ def student_dashboard(user_id):
     db.session.commit()
 
 
-    # ======================================================
-    # RECENT APPLICATIONS
-    # ======================================================
 
     recent_applications = []
 
@@ -687,10 +649,6 @@ def student_dashboard(user_id):
         })
 
 
-    # ======================================================
-    # DASHBOARD RESPONSE
-    # ======================================================
-
     return {
 
         "student_name": student.full_name,
@@ -714,9 +672,6 @@ def student_dashboard(user_id):
     }, 200
     
     
-# ==========================================================
-# GET SINGLE DRIVE DETAILS
-# ==========================================================
 
 def get_drive_details(drive_id):
 
@@ -793,9 +748,6 @@ def get_drive_details(drive_id):
     }, 200
 
 
-# ==========================================================
-# EXPORT APPLICATIONS CSV
-# ==========================================================
 
 from flask_jwt_extended import get_jwt_identity
 from models.student import Student

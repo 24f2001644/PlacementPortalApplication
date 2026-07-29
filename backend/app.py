@@ -41,9 +41,6 @@ def create_app():
         supports_credentials=True
     )
 
-    # =====================================
-    # Initialize Extensions
-    # =====================================
 
     db.init_app(app)
 
@@ -76,9 +73,6 @@ def create_app():
     cache.init_app(app)
     print(cache.config)
 
-    # =====================================
-    # Register Blueprints
-    # =====================================
 
     app.register_blueprint(auth_bp)
 
@@ -94,9 +88,6 @@ def create_app():
     
 
 
-    # =====================================
-    # Create Default Admin
-    # =====================================
 
     with app.app_context():
 
@@ -121,9 +112,6 @@ def create_app():
             "redis": redis_status
         }
 
-    # =====================================
-    # Home Route
-    # =====================================
 
     @app.route("/")
     def index():

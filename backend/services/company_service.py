@@ -10,9 +10,6 @@ from models.application import Application
 from models.placement_drive import PlacementDrive
 
 from datetime import datetime
-# ==========================================================
-# COMPANY DASHBOARD
-# ==========================================================
 
 def get_dashboard(user_id):
 
@@ -122,9 +119,6 @@ def get_dashboard(user_id):
     return dashboard, 200
 
 
-# ==========================================================
-# COMPANY PROFILE
-# ==========================================================
 
 def get_company_profile(user_id):
 
@@ -180,9 +174,6 @@ def get_company_profile(user_id):
     
     
     
-# ==========================================================
-# CREATE PLACEMENT DRIVE
-# ==========================================================
 
 def create_drive(user_id, data):
 
@@ -258,9 +249,6 @@ def create_drive(user_id, data):
     }, 201
 
 
-# ==========================================================
-# GET COMPANY DRIVES
-# ==========================================================
 
 def get_company_drives(user_id):
 
@@ -311,9 +299,6 @@ def get_company_drives(user_id):
     return data, 200
 
 
-# ==========================================================
-# UPDATE DRIVE
-# ==========================================================
 
 def update_drive(user_id, drive_id, data):
 
@@ -415,9 +400,6 @@ def update_drive(user_id, drive_id, data):
     }, 200
 
 
-# ==========================================================
-# DELETE DRIVE
-# ==========================================================
 
 def delete_drive(user_id, drive_id):
 
@@ -448,9 +430,6 @@ def delete_drive(user_id, drive_id):
     }, 200
     
     
-# ==========================================================
-# VIEW APPLICATIONS FOR A DRIVE
-# ==========================================================
 
 def get_drive_applications(user_id):
 
@@ -512,9 +491,6 @@ def get_drive_applications(user_id):
     return data, 200
 
 
-# ==========================================================
-# UPDATE APPLICATION STATUS
-# ==========================================================
 
 # def update_application_status(
 
@@ -637,9 +613,6 @@ def update_application_status(user_id, application_id, status):
     }, 200
 
 
-# ==========================================================
-# CLOSE PLACEMENT DRIVE
-# ==========================================================
 
 def close_drive(user_id, drive_id):
 
@@ -682,9 +655,6 @@ def close_drive(user_id, drive_id):
     
     
     
-# ==========================================================
-# GET SELECTED STUDENTS
-# ==========================================================
 
 def get_selected_students(user_id):
 
@@ -748,9 +718,6 @@ def get_selected_students(user_id):
     return data, 200
 
 
-# ==========================================================
-# GET STUDENT DETAILS
-# ==========================================================
 
 def get_student_details(user_id, student_id):
 

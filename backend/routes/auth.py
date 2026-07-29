@@ -20,9 +20,6 @@ auth_bp = Blueprint(
 )
 
 
-# ============================================
-# LOGIN
-# ============================================
 
 @auth_bp.post("/login")
 def login():
@@ -32,10 +29,6 @@ def login():
     return login_user(data)
 
 
-
-# ============================================
-# STUDENT REGISTRATION
-# ============================================
 
 @auth_bp.post("/register/student")
 def student_register():
@@ -47,10 +40,6 @@ def student_register():
 
 
 
-# ============================================
-# COMPANY REGISTRATION
-# ============================================
-
 @auth_bp.post("/register/company")
 def company_register():
 
@@ -60,9 +49,6 @@ def company_register():
 
 
 
-# ============================================
-# CURRENT USER PROFILE
-# ============================================
 
 @auth_bp.get("/profile")
 @jwt_required()
@@ -72,9 +58,6 @@ def profile():
 
 
 
-# ============================================
-# UPDATE STUDENT PROFILE
-# ============================================
 
 @auth_bp.put("/student/profile")
 @jwt_required()
@@ -86,9 +69,6 @@ def edit_student_profile():
 
 
 
-# ============================================
-# UPLOAD RESUME
-# ============================================
 
 @auth_bp.post("/student/resume")
 @jwt_required()
@@ -100,9 +80,6 @@ def student_resume():
 
 
 
-# ============================================
-# UPDATE COMPANY PROFILE
-# ============================================
 
 @auth_bp.put("/company/profile")
 @jwt_required()

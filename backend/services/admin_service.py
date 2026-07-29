@@ -17,9 +17,6 @@ from models.export_job import ExportJob
 
 # from models.user import User
 # from tasks.notification_tasks import send_notification
-# ==========================================================
-# ADMIN DASHBOARD
-# ==========================================================
 
 def admin_dashboard():
 
@@ -130,9 +127,6 @@ def admin_dashboard():
     }, 200
 
 
-# ==========================================================
-# GET ALL COMPANIES
-# ==========================================================
 
 def get_all_companies(search=None):
 
@@ -223,10 +217,6 @@ def get_all_companies(search=None):
     return result, 200
 
 
-# ==========================================================
-# APPROVE COMPANY
-# ==========================================================
-
 def approve_company(user_id):
 
     user = db.session.get(
@@ -272,9 +262,6 @@ def approve_company(user_id):
     }, 200
 
 
-# ==========================================================
-# REJECT COMPANY
-# ==========================================================
 
 def reject_company(user_id):
 
@@ -304,9 +291,6 @@ def reject_company(user_id):
     }, 200
 
 
-# ==========================================================
-# BLACKLIST / UNBLACKLIST COMPANY
-# ==========================================================
 
 def blacklist_company(user_id):
 
@@ -338,9 +322,6 @@ def blacklist_company(user_id):
     
     
     
-# ==========================================================
-# GET ALL STUDENTS
-# ==========================================================
 
 def get_all_students(search=None):
 
@@ -520,9 +501,6 @@ def get_student_details(user_id):
 
     },200
 
-# ==========================================================
-# TOGGLE STUDENT STATUS
-# ==========================================================
 
 def toggle_student_status(user_id):
 
@@ -556,9 +534,6 @@ def toggle_student_status(user_id):
 
 
 
-# ==========================================================
-# GET ALL PLACEMENT DRIVES
-# ==========================================================
 
 def get_all_drives(search=None):
 
@@ -648,9 +623,6 @@ def get_all_drives(search=None):
     return result, 200
 
 
-# ==========================================================
-# APPROVE PLACEMENT DRIVE
-# ==========================================================
 
 def approve_drive(drive_id):
 
@@ -688,9 +660,6 @@ def approve_drive(drive_id):
     }, 200
 
 
-# ==========================================================
-# REJECT PLACEMENT DRIVE
-# ==========================================================
 
 def reject_drive(drive_id):
 
@@ -719,9 +688,6 @@ def reject_drive(drive_id):
     }, 200
 
 
-# ==========================================================
-# CLOSE PLACEMENT DRIVE
-# ==========================================================
 
 def close_drive(drive_id):
 
@@ -758,9 +724,6 @@ def close_drive(drive_id):
 
     }, 200
     
-# ==========================================================
-# GET ALL APPLICATIONS
-# ==========================================================
 
 def get_all_applications(
 
@@ -782,9 +745,6 @@ def get_all_applications(
 
     )
 
-    # ------------------------------------------------------
-    # FILTER BY STATUS
-    # ------------------------------------------------------
 
     if status:
 
@@ -794,9 +754,6 @@ def get_all_applications(
 
         )
 
-    # ------------------------------------------------------
-    # SEARCH
-    # ------------------------------------------------------
 
     if search:
 
@@ -978,16 +935,9 @@ def update_application_status(
 
     }, 200
     
-    
-# ==========================================================
-# PLACEMENT STATISTICS
-# ==========================================================
 @cache.cached(timeout=300)
 def placement_statistics():
     print("Running placement_statistics()")
-    # ------------------------------------------------------
-    # OVERALL COUNTS
-    # ------------------------------------------------------
 
     total_students = Student.query.count()
 
@@ -997,9 +947,6 @@ def placement_statistics():
 
     total_applications = Application.query.count()
 
-    # ------------------------------------------------------
-    # COMPANY STATISTICS
-    # ------------------------------------------------------
 
     approved_companies = User.query.filter_by(
 
@@ -1025,9 +972,6 @@ def placement_statistics():
 
     ).count()
 
-    # ------------------------------------------------------
-    # STUDENT STATISTICS
-    # ------------------------------------------------------
 
     active_students = User.query.filter_by(
 
@@ -1045,9 +989,6 @@ def placement_statistics():
 
     ).count()
 
-    # ------------------------------------------------------
-    # DRIVE STATISTICS
-    # ------------------------------------------------------
 
     approved_drives = PlacementDrive.query.filter_by(
 
@@ -1073,9 +1014,6 @@ def placement_statistics():
 
     ).count()
 
-    # ------------------------------------------------------
-    # APPLICATION STATISTICS
-    # ------------------------------------------------------
 
     applied = Application.query.filter_by(
 
@@ -1101,9 +1039,6 @@ def placement_statistics():
 
     ).count()
 
-    # ------------------------------------------------------
-    # PLACEMENT PERCENTAGE
-    # ------------------------------------------------------
 
     placement_percentage = 0
 
@@ -1117,9 +1052,6 @@ def placement_statistics():
 
         )
 
-    # ------------------------------------------------------
-    # BRANCH STATISTICS
-    # ------------------------------------------------------
 
     branch_statistics = []
 
@@ -1187,9 +1119,6 @@ def placement_statistics():
 
         })
 
-    # ------------------------------------------------------
-    # COMPANY HIRING STATISTICS
-    # ------------------------------------------------------
 
     company_statistics = []
 
@@ -1235,9 +1164,6 @@ def placement_statistics():
 
         })
 
-    # ------------------------------------------------------
-    # MONTHLY USER REGISTRATIONS
-    # ------------------------------------------------------
 
     monthly_registrations = []
 
@@ -1295,9 +1221,6 @@ def placement_statistics():
 
         })
 
-    # ------------------------------------------------------
-    # FINAL RESPONSE
-    # ------------------------------------------------------
 
     return {
 
@@ -1346,10 +1269,6 @@ def placement_statistics():
     }, 200
     
     
-    
-# ==========================================================
-# GET SINGLE PLACEMENT DRIVE DETAILS
-# ==========================================================
 
 def get_drive_details(drive_id):
 
@@ -1464,9 +1383,6 @@ def get_drive_details(drive_id):
 
     }, 200
     
-# ==========================================================
-# CREATE EXPORT JOB
-# ==========================================================
 
 def create_export_job(student_id):
     
@@ -1494,9 +1410,6 @@ def create_export_job(student_id):
 
     }, 202
     
-# ==========================================================
-# GET EXPORT STATUS
-# ==========================================================
 
 def get_export_status(export_id):
 
@@ -1540,9 +1453,6 @@ def get_export_status(export_id):
 
     }, 200
     
-# ==========================================================
-# DOWNLOAD EXPORT
-# ==========================================================
 
 def download_export(export_id):
 
@@ -1584,10 +1494,6 @@ def download_export(export_id):
 
     )
     
-    
-# ==========================================================
-# GET ALL EXPORTS
-# ==========================================================
 
 def get_all_exports():
 

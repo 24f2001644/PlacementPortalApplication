@@ -4,16 +4,9 @@ from celery.schedules import crontab
 from app import create_app
 
 
-# ==========================================================
-# Create Flask App
-# ==========================================================
-
 flask_app = create_app()
 
 
-# ==========================================================
-# Create Celery
-# ==========================================================
 
 def create_celery(app):
 
@@ -27,24 +20,17 @@ def create_celery(app):
             "tasks.admin_report_tasks",
         ]
     )
-
-    # Load Celery configuration
     celery.config_from_object("celery_config")
 
-    # ==========================================================
-    # Celery Beat Schedule
-    # ==========================================================
     
     
     celery.conf.beat_schedule = {
 
-        # Every day at 9 AM
         "daily-reminder": {
             "task": "tasks.scheduled_tasks.daily_reminder",
             "schedule": crontab(hour=9, minute=0),
         },
 
-        # First day of every month at 12:00 AM
         "monthly-placement-report": {
             "task": "tasks.scheduled_tasks.monthly_report_scheduler",
             "schedule": crontab(
@@ -69,10 +55,6 @@ def create_celery(app):
     # }
 
 
-    # ==========================================================
-    # Flask Application Context
-    # ==========================================================
-
     class ContextTask(celery.Task):
 
         def __call__(self, *args, **kwargs):
@@ -85,10 +67,6 @@ def create_celery(app):
 
     return celery
 
-
-# ==========================================================
-# Celery Instance
-# ==========================================================
 
 celery = create_celery(flask_app)
 

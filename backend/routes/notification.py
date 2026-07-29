@@ -11,9 +11,6 @@ from services.notification_service import (
     unread_count,
     create_notification
 )
-# ==========================================================
-# NOTIFICATION BLUEPRINT
-# ==========================================================
 
 notification_bp = Blueprint(
 
@@ -37,9 +34,6 @@ def send_notification():
     data, status = create_notification(body)
 
     return jsonify(data), status
-# ==========================================================
-# GET ALL NOTIFICATIONS
-# ==========================================================
 
 @notification_bp.route(
 
@@ -56,9 +50,6 @@ def notifications():
     return jsonify(data), status
 
 
-# ==========================================================
-# MARK AS READ
-# ==========================================================
 
 @notification_bp.route(
 
@@ -79,9 +70,6 @@ def read_notification(notification_id):
     return jsonify(data), status
 
 
-# ==========================================================
-# DELETE NOTIFICATION
-# ==========================================================
 
 @notification_bp.route(
 
@@ -102,9 +90,6 @@ def remove_notification(notification_id):
     return jsonify(data), status
 
 
-# ==========================================================
-# UNREAD COUNT
-# ==========================================================
 
 @notification_bp.route(
 
@@ -121,9 +106,6 @@ def notification_count():
     return jsonify(data), status
 
 
-# ==========================================================
-# CREATE NOTIFICATION (ADMIN)
-# ==========================================================
 
 # @notification_bp.route(
 #     "",
