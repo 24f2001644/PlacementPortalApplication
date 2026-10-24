@@ -34,11 +34,12 @@ def create_app():
             r"/api/*": {
                 "origins": [
                     "http://localhost:5173",
-                    "https://placement-portal-application-psi.vercel.app"
+                    "https://placement-portal-application-psi.vercel.app",
+                    "http://talbiya-parveen-placement-portal-application.s3-website.eu-north-1.amazonaws.com"
                 ]
             }
         },
-        supports_credentials=True
+        supports_credentials=Truec
     )
 
 
