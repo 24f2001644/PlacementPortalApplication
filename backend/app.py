@@ -39,7 +39,7 @@ def create_app():
                 ]
             }
         },
-        supports_credentials=Truec
+        supports_credentials=True
     )
 
 
